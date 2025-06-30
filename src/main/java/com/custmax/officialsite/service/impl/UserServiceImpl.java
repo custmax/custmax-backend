@@ -1,0 +1,117 @@
+package com.custmax.officialsite.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.custmax.officialsite.dto.LoginResponse;
+import com.custmax.officialsite.entity.User;
+import com.custmax.officialsite.entity.InviteCode;
+import com.custmax.officialsite.mapper.UserMapper;
+import com.custmax.officialsite.mapper.InviteCodeMapper;
+import com.custmax.officialsite.service.EmailSenderStrategy;
+import com.custmax.officialsite.service.UserService;
+import com.custmax.officialsite.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private InviteCodeMapper inviteCodeMapper;
+
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public User register(String email, String password, String username, String inviteCode) {
+        InviteCode code = inviteCodeMapper.selectById(inviteCode);
+        if (code == null || Boolean.TRUE.equals(code.getIsUsed())) {
+            throw new IllegalArgumentException("邀请码无效或已被使用");
+        }
+        if (userMapper.selectOne(new QueryWrapper<User>().eq("email", email)) != null) {
+            throw new IllegalArgumentException("邮箱已注册");
+        }
+        User user = new User();
+        user.setEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setUsername(username);
+        user.setInvitedByCode(inviteCode);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        userMapper.insert(user);
+
+        code.setIsUsed(true);
+        code.setUsedBy(user.getId());
+        code.setUsedAt(LocalDateTime.now());
+        inviteCodeMapper.updateById(code);
+
+        return user;
+    }
+
+    @Override
+    public LoginResponse login(String email, String password) {
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
+        if (user == null || !passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new IllegalArgumentException("邮箱或密码错误");
+        }
+        String token = JwtUtil.generateToken(user.getEmail());
+        return new LoginResponse(user, token);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
+    }
+
+
+    public void sendResetPasswordEmail(String email) {
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
+        if (user == null) return;
+
+        String token = UUID.randomUUID().toString();
+        user.setResetToken(token);
+        user.setResetTokenExpire(LocalDateTime.now().plusHours(1));
+        userMapper.updateById(user);
+
+        // Prepare email API request
+        String apiUrl = "https://mail.cusob.com/api/batch_mail/api/send";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-API-Key", "1407534e6b439bf91bb146c56a66287bc9b29c8eb5c139356d0624082ba72651");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String resetLink = "https://mail.cusob.com/reset-password?token=" + token;
+        String body = String.format("{\"recipient\":\"%s\",\"addresser\":\"hello@cusob.com\",\"content\":\"Click to reset: %s\"}", email, resetLink);
+
+        HttpEntity<String> request = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, request, String.class);
+        System.out.println(response);
+        // Optional: handle response status and errors
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("reset_token", token));
+        if (user == null || user.getResetTokenExpire().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Reset link is invalid or expired");
+        }
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+        user.setResetTokenExpire(null);
+        userMapper.updateById(user);
+    }
+}

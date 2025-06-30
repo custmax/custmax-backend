@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:mysql://172.233.208.112:3306/custmax_official
+    username: root
+    password: 2Ikroes&cube
+  ai:
+    openai:
+      model: gpt-3.5-turbo
+      api-key: your_api_key_here
+server:
+  port: 9001
+
+cors:
+  allowed-origins: https://www.custmax.com
+
+mail:
+  host: smtp.larksuite.com
+  port: 465
+  username: hello@custmax.com
+  password: 2ZmJgBKYrs6yNRp5
+  protocol: smtp
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+        ssl:
+          enable: true
+  imap:
+    host: imap.larksuite.com
+    port: 993
+    protocol: imap
