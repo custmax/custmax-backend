@@ -1,21 +1,13 @@
 package com.custmax.officialsite.dto;
 
-import com.custmax.officialsite.entity.User;
 
+import lombok.Data;
+
+@Data
 public class LoginResponse {
-    private User user;
+    private Long id;
+    private String email;
+    private String username;
+    private String status;
     private String token;
-
-    public LoginResponse(User user, String token) {
-        this.user = user;
-        this.token = token;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public String getToken() {
-        return token;
-    }
 }

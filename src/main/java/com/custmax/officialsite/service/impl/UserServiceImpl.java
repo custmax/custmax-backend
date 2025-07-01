@@ -2,6 +2,8 @@ package com.custmax.officialsite.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.custmax.officialsite.dto.LoginResponse;
+import com.custmax.officialsite.dto.SubscriptionDTO;
+import com.custmax.officialsite.dto.WebsiteDTO;
 import com.custmax.officialsite.entity.User;
 import com.custmax.officialsite.entity.InviteCode;
 import com.custmax.officialsite.mapper.UserMapper;
@@ -9,6 +11,7 @@ import com.custmax.officialsite.mapper.InviteCodeMapper;
 import com.custmax.officialsite.service.EmailSenderStrategy;
 import com.custmax.officialsite.service.UserService;
 import com.custmax.officialsite.util.JwtUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -66,15 +70,26 @@ public class UserServiceImpl implements UserService {
     public LoginResponse login(String email, String password) {
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
         if (user == null || !passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException("邮箱或密码错误");
+            throw new IllegalArgumentException("Email or password error");
         }
         String token = JwtUtil.generateToken(user.getEmail());
-        return new LoginResponse(user, token);
+        LoginResponse loginResponse = new LoginResponse();
+        BeanUtils.copyProperties(user, loginResponse);
+        loginResponse.setToken(token);
+        return loginResponse;
     }
 
     @Override
     public User getCurrentUser() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            email = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        } else {
+            throw new IllegalStateException("Unknown principal type: " + principal.getClass());
+        }
         return userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
     }
 
@@ -102,6 +117,21 @@ public class UserServiceImpl implements UserService {
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, request, String.class);
         System.out.println(response);
         // Optional: handle response status and errors
+    }
+
+    @Override
+    public List<WebsiteDTO> getCurrentUserWebsites() {
+        return null;
+    }
+
+    @Override
+    public List<String> getCurrentUserDomains() {
+        return List.of();
+    }
+
+    @Override
+    public List<SubscriptionDTO> getCurrentUserSubscriptions() {
+        return List.of();
     }
 
     public void resetPassword(String token, String newPassword) {
