@@ -6,6 +6,8 @@ import com.custmax.officialsite.dto.ConfirmPaymentRequest;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -14,8 +16,18 @@ import java.util.Map;
 @Component("stripe")
 public class StripePaymentStrategy implements PaymentStrategy {
 
-    static {
-        Stripe.apiKey = "sk_test_xxx"; // 替换为你的 Stripe Secret Key
+    @Value("${stripe.secret-key}")
+    private String secretKey;
+
+    @Value("${stripe.success-url}")
+    private String successUrl;
+
+    @Value("${stripe.cancel-url}")
+    private String cancelUrl;
+
+    @PostConstruct
+    public void init() {
+        Stripe.apiKey = secretKey;
     }
 
     @Override
@@ -23,8 +35,8 @@ public class StripePaymentStrategy implements PaymentStrategy {
         try {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("https://www.custmax.com/payment/success?session_id={CHECKOUT_SESSION_ID}")
-                    .setCancelUrl("https:///www.custmax.com/payment/cancel")
+                    .setSuccessUrl(successUrl + "?session_id={CHECKOUT_SESSION_ID}")
+                    .setCancelUrl(cancelUrl)
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
                                     .setQuantity(1L)

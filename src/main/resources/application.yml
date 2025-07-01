@@ -49,3 +49,5 @@ mail:
 stripe:
   public-key: ${STRIPE_PUBLISHABLE_KEY}
   secret-key: ${STRIPE_SECRET_KEY}
+  success-url: https://www.custmax.com/payment/success
+  cancel-url: https://www.custmax.com/payment/cancel

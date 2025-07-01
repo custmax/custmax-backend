@@ -1,15 +1,15 @@
 package com.custmax.officialsite.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Data
-@TableName("payment_history")
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentHistory {
-    @TableId(type = IdType.AUTO)
     private Long id;
     private Long userId;
     private Long subscriptionId;
