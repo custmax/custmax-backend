@@ -1,6 +1,6 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.RegisterDomainRequest;
+import com.custmax.officialsite.dto.website.RegisterDomainRequest;
 import com.custmax.officialsite.service.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

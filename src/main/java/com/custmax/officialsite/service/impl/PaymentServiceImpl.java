@@ -1,9 +1,7 @@
 // src/main/java/com/custmax/officialsite/service/impl/PaymentServiceImpl.java
 package com.custmax.officialsite.service.impl;
 
-import com.custmax.officialsite.dto.CreatePaymentIntentRequest;
 import com.custmax.officialsite.dto.ConfirmPaymentRequest;
-import com.custmax.officialsite.dto.PaymentRecordDTO;
 import com.custmax.officialsite.entity.PaymentHistory;
 import com.custmax.officialsite.entity.Subscription;
 import com.custmax.officialsite.mapper.PaymentHistoryMapper;
@@ -16,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

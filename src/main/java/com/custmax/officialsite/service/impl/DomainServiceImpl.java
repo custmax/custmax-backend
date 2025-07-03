@@ -1,7 +1,6 @@
 package com.custmax.officialsite.service.impl;
 
 
-import com.custmax.officialsite.dto.RegisterDomainRequest;
 import com.custmax.officialsite.entity.SshServer;
 import com.custmax.officialsite.mapper.SshServerMapper;
 import com.custmax.officialsite.service.DomainService;

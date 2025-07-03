@@ -1,15 +1,12 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.CreateWebsiteRequest;
 import com.custmax.officialsite.entity.CustomUserDetails;
 import com.custmax.officialsite.service.impl.WebSiteServiceImpl;
-import com.sun.security.auth.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController

@@ -1,9 +1,6 @@
 package com.custmax.officialsite.service;
 
-import com.custmax.officialsite.dto.LoginResponse;
-import com.custmax.officialsite.dto.SubscriptionDTO;
 import com.custmax.officialsite.entity.User;
-import com.custmax.officialsite.dto.WebsiteDTO;
 
 import java.util.List;
 

@@ -1,7 +1,6 @@
 // src/main/java/com/custmax/officialsite/payment/StripePaymentStrategy.java
 package com.custmax.officialsite.payment;
 
-import com.custmax.officialsite.dto.CreatePaymentIntentRequest;
 import com.custmax.officialsite.dto.ConfirmPaymentRequest;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;

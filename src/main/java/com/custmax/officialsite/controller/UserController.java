@@ -1,9 +1,5 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.LoginRequest;
-import com.custmax.officialsite.dto.LoginResponse;
-import com.custmax.officialsite.dto.SubscriptionDTO;
-import com.custmax.officialsite.dto.WebsiteDTO;
 import com.custmax.officialsite.entity.CustomUserDetails;
 import com.custmax.officialsite.entity.User;
 import com.custmax.officialsite.service.UserService;

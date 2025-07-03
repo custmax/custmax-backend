@@ -2,7 +2,7 @@ package com.custmax.officialsite.service.impl;
 
 import ch.qos.logback.classic.Logger;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.custmax.officialsite.dto.ClaimResult;
+import com.custmax.officialsite.dto.user.ClaimInviteCodeResponse;
 import com.custmax.officialsite.entity.InviteCode;
 import com.custmax.officialsite.mapper.InviteCodeMapper;
 import com.custmax.officialsite.service.InviteCodeService;
@@ -44,7 +44,7 @@ public class InviteCodeServiceImpl implements InviteCodeService {
     }
 
     @Override
-    public ClaimResult claim(String email) {
+    public ClaimInviteCodeResponse claim(String email) {
         // 查询该邮箱是否已存在未使用的邀请码
         InviteCode exist = inviteCodeMapper.selectOne(
                 new LambdaQueryWrapper<InviteCode>()
@@ -53,7 +53,7 @@ public class InviteCodeServiceImpl implements InviteCodeService {
         );
         if (exist != null) {
             // 已有未使用的邀请码，不再发送邮件
-            return new ClaimResult(exist.getCode(), true);
+            return new ClaimInviteCodeResponse(exist.getCode(), true);
         }
         String code = generateUniqueInviteCode();
         InviteCode inviteCode = new InviteCode();
@@ -68,7 +68,7 @@ public class InviteCodeServiceImpl implements InviteCodeService {
         if (sendSuccess == false) {
             logger.error("failed to send invite code to email: {}", email);
         }
-        return new ClaimResult(code, false);
+        return new ClaimInviteCodeResponse(code, false);
     }
 
     @Override

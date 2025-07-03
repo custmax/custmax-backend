@@ -1,9 +1,9 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.ClaimResult;
 import com.custmax.officialsite.entity.InviteCode;
 import com.custmax.officialsite.service.InviteCodeService;
 import org.springframework.web.bind.annotation.*;
+import com.custmax.officialsite.dto.user.ClaimInviteCodeResponse;
 import javax.annotation.Resource;
 
 @RestController
@@ -13,7 +13,7 @@ public class InviteCodeController {
     private InviteCodeService inviteCodeService;
 
     @PostMapping("/claim")
-    public ClaimResult claim(@RequestParam String email) {
+    public ClaimInviteCodeResponse claim(@RequestParam String email) {
         return inviteCodeService.claim(email);
     }
 
