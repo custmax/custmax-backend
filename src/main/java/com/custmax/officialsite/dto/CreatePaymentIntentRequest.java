@@ -10,6 +10,7 @@ public class CreatePaymentIntentRequest {
     private Long subscriptionId;
     private BigDecimal amount;
     private String currency;
-    private String paymentMethod; // 如 stripe、alipay 等
+    // stripe、paypal...
+    private String paymentMethod;
     private String description;
 }

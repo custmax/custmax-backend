@@ -27,7 +27,7 @@ public class UserPaymentController {
     @GetMapping
     public ResponseEntity<PaymentRecordDTO> getMyPaymentHistory() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = ((User) authentication.getPrincipal()).getId(); // 假设你的UserDetails实现有getId()
+        Long userId = ((User) authentication.getPrincipal()).getId();
         PaymentRecordDTO response = (PaymentRecordDTO) paymentService.getCurrentUserPaymentHistory(userId);
         return ResponseEntity.ok(response);
     }

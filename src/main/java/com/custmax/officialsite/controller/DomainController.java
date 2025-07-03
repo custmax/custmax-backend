@@ -1,5 +1,6 @@
 package com.custmax.officialsite.controller;
 
+import com.custmax.officialsite.dto.RegisterDomainRequest;
 import com.custmax.officialsite.service.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,18 +29,13 @@ public class DomainController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Call WHOIS query API
-            Map<String, Object> whoisData = domainService.queryWhois(domainName);
-
             // Send email to hello@custmax.com
-            domainService.sendRegistrationEmail(domainName, whoisData);
-
+            domainService.sendRegistrationEmail(domainName);
             response.put("domainId", "dom_" + System.currentTimeMillis());
             response.put("domainName", domainName);
             response.put("status", "pending");
             response.put("message", "Domain registration request submitted, email sent to administrator");
             response.put("registeredAt", new Date());
-            response.put("whoisInfo", whoisData);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -67,13 +63,12 @@ public class DomainController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/domains/{id}")
+    @PutMapping("/domains")
     public ResponseEntity<Map<String, Object>> updateDomainSettings(
-            @PathVariable String id,
-            @RequestBody Map<String, Object> request) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("domainId", id);
-        response.put("message", "域名设置更新成功");
+            @RequestBody RegisterDomainRequest request) {
+        Map<String, Object> response = domainService.updateDomainSettings(request);
+
+        response.put("message", "domain update successfully");
         response.put("updatedAt", new Date());
         response.put("settings", request);
         return ResponseEntity.ok(response);
@@ -84,7 +79,7 @@ public class DomainController {
         Map<String, Object> response = new HashMap<>();
         response.put("domainId", id);
         response.put("status", "deleted");
-        response.put("message", "域名删除成功");
+        response.put("message", "domain delete successfully");
         response.put("deletedAt", new Date());
         return ResponseEntity.ok(response);
     }
@@ -97,7 +92,7 @@ public class DomainController {
         response.put("websiteId", websiteId);
         response.put("domainId", domainId);
         response.put("status", "mapped");
-        response.put("message", "域名映射成功");
+        response.put("message", "domain mapped to website successfully");
         response.put("mappedAt", new Date());
         return ResponseEntity.ok(response);
     }
@@ -111,9 +106,38 @@ public class DomainController {
         response.put("sslEnabled", true);
         response.put("sslStatus", "active");
         response.put("certificateType", request.getOrDefault("certificateType", "Let's Encrypt"));
-        response.put("message", "SSL配置成功");
+        response.put("message", "SSL configured successfully");
         response.put("configuredAt", new Date());
         response.put("expiresAt", new Date(System.currentTimeMillis() + 90L * 24 * 60 * 60 * 1000));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/domains/search")
+    public ResponseEntity<Map<String, Object>> searchDomainAvailability(@RequestParam String name) {
+        List<String> tlds = Arrays.asList("com", "net", "cn", "org", "io");
+        List<Map<String, Object>> results = new ArrayList<>();
+        for (String tld : tlds) {
+            String fullDomain = name + "." + tld;
+            Map<String, Object> whoisData = domainService.queryWhois(fullDomain);
+            int code = (int) whoisData.getOrDefault("code", 500);
+            Map<String, Object> result;
+            if (code == 200) {
+                result = Map.of(
+                        "domain", fullDomain,
+                        "available", true,
+                        "response", Map.of("code", 200)
+                );
+            } else {
+                result = Map.of(
+                        "domain", fullDomain,
+                        "available", false,
+                        "response", whoisData
+                );
+            }
+            results.add(result);
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", results);
         return ResponseEntity.ok(response);
     }
 }

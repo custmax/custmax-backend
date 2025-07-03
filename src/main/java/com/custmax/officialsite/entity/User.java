@@ -3,6 +3,7 @@ package com.custmax.officialsite.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @TableName("users")
@@ -25,9 +26,11 @@ public class User {
     private LocalDateTime resetTokenExpire;
     @TableField("subscription_id")
     private Long subscriptionId;
+
     /**
-     * 用户状态: active, suspended, banned
+     * User status: active, suspended, banned
      */
+
     private String status;
     @TableField("status_reason")
     private String statusReason;
@@ -41,4 +44,13 @@ public class User {
     private Integer failedLoginAttempts;
     @TableField("lockout_until")
     private LocalDateTime lockoutUntil;
+
+    @TableField(exist = false)
+    private Subscription subscription;
+
+    @TableField(exist = false)
+    private List<Role> roles;
+
+    @TableField(exist = false)
+    private List<Permission> permissions;
 }

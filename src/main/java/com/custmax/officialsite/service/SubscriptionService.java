@@ -1,9 +1,11 @@
 package com.custmax.officialsite.service;
 
+import com.custmax.officialsite.dto.SubscriptionDTO;
 import com.custmax.officialsite.dto.SubscriptionPlanRequest;
 import com.custmax.officialsite.dto.SubscriptionServiceRequest;
 import com.custmax.officialsite.dto.UpdateSubscriptionRequest;
 
+import java.util.List;
 import java.util.Map;
 
 public interface SubscriptionService {
@@ -14,4 +16,6 @@ public interface SubscriptionService {
     Map<String, Object> subscribeToPlan(SubscriptionPlanRequest request);
 
     Map<String, Object> cancelSubscription(String subscriptionId);
+
+    List<SubscriptionDTO> getCurrentUserSubscriptions();
 }

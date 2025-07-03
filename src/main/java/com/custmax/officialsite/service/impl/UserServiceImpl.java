@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.custmax.officialsite.dto.LoginResponse;
 import com.custmax.officialsite.dto.SubscriptionDTO;
 import com.custmax.officialsite.dto.WebsiteDTO;
+import com.custmax.officialsite.entity.CustomUserDetails;
 import com.custmax.officialsite.entity.User;
 import com.custmax.officialsite.entity.InviteCode;
 import com.custmax.officialsite.mapper.UserMapper;
@@ -85,6 +86,8 @@ public class UserServiceImpl implements UserService {
         String email;
         if (principal instanceof org.springframework.security.core.userdetails.User) {
             email = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof com.custmax.officialsite.entity.CustomUserDetails) {
+            email = ((com.custmax.officialsite.entity.CustomUserDetails) principal).getUsername();
         } else if (principal instanceof String) {
             email = (String) principal;
         } else {
@@ -93,10 +96,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
     }
 
-
+    @Override
     public void sendResetPasswordEmail(String email) {
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         String token = UUID.randomUUID().toString();
         user.setResetToken(token);
@@ -134,6 +139,7 @@ public class UserServiceImpl implements UserService {
         return List.of();
     }
 
+    @Override
     public void resetPassword(String token, String newPassword) {
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("reset_token", token));
         if (user == null || user.getResetTokenExpire().isBefore(LocalDateTime.now())) {

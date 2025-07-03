@@ -24,7 +24,7 @@ public class InviteCodeServiceImpl implements InviteCodeService {
     private static final String CHAR_POOL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     private String generateInviteCode() {
-        int length = 6 + (int)(Math.random() * 3); // 6~8位
+        int length = 6 + (int)(Math.random() * 3);
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             int idx = (int)(Math.random() * CHAR_POOL.length());
@@ -74,7 +74,9 @@ public class InviteCodeServiceImpl implements InviteCodeService {
     @Override
     public boolean send(String code, String email) {
         InviteCode inviteCode = inviteCodeMapper.selectById(code);
-        if (inviteCode == null) return false;
+        if (inviteCode == null) {
+            return false;
+        }
         // TODO:
         boolean sendSuccess = sendInviteConfirmation(email, code);
         inviteCode.setSentAt(LocalDateTime.now());

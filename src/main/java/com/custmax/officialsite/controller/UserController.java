@@ -4,8 +4,12 @@ import com.custmax.officialsite.dto.LoginRequest;
 import com.custmax.officialsite.dto.LoginResponse;
 import com.custmax.officialsite.dto.SubscriptionDTO;
 import com.custmax.officialsite.dto.WebsiteDTO;
+import com.custmax.officialsite.entity.CustomUserDetails;
 import com.custmax.officialsite.entity.User;
 import com.custmax.officialsite.service.UserService;
+import com.custmax.officialsite.service.WebSiteService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,6 +20,8 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private WebSiteService webSiteService;
 
     @PostMapping("/register")
     public User register(@RequestParam String email, @RequestParam String password,
@@ -43,4 +49,21 @@ public class UserController {
     public void resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         userService.resetPassword(token, newPassword);
     }
+    @GetMapping("/me/domains")
+    public List<String> getUserDomains() {
+        // 假设 UserService 有方法获取用户域名
+        return userService.getCurrentUserDomains();
+    }
+
+    @GetMapping("/me/subscription")
+    public List<SubscriptionDTO> getUserSubscriptions() {
+        return userService.getCurrentUserSubscriptions();
+    }
+    // List User Websites
+    @GetMapping("/users/me/websites")
+    public ResponseEntity<?> listUserWebsites(@AuthenticationPrincipal CustomUserDetails user) {
+        List<?> websites = webSiteService.listUserWebsites(user.getUserId());
+        return ResponseEntity.ok(websites);
+    }
+
 }

@@ -1,9 +1,14 @@
 package com.custmax.officialsite.service.impl;
 
 
+import com.custmax.officialsite.dto.RegisterDomainRequest;
+import com.custmax.officialsite.entity.SshServer;
+import com.custmax.officialsite.mapper.SshServerMapper;
 import com.custmax.officialsite.service.DomainService;
+import com.custmax.officialsite.util.SshExecutor;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,6 +30,11 @@ public class DomainServiceImpl implements DomainService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Value("${website.wpcli.path}")
+    private String wpPath;
+
+    @Autowired
+    private SshServerMapper sshServerMapper;
 
     public Map<String, Object> queryWhois(String domain) {
         String url = "https://uapis.cn/api/whois.php?domain=" + domain;
@@ -35,7 +45,37 @@ public class DomainServiceImpl implements DomainService {
         }
     }
 
-    public void sendRegistrationEmail(String domain, Map<String, Object> whoisData) {
+    @Override
+    public Map<String, Object> updateDomainSettings(RegisterDomainRequest request) {
+        String oldUrl = request.getOldUrl();
+        String newUrl = request.getNewUrl();
+
+        SshServer server = sshServerMapper.selectById(1L);
+
+        String cmd = String.format(
+                "cd %s && wp search-replace '%s' '%s' --all-tables --allow-root",
+                wpPath, oldUrl, newUrl
+        );
+
+        Map<String, Object> resultMap = new java.util.HashMap<>();
+        try {
+            String result = SshExecutor.exec(
+                    server.getHost(),
+                    server.getPort(),
+                    server.getUsername(),
+                    server.getPassword(),
+                    cmd
+            );
+            resultMap.put("success", true);
+            resultMap.put("output", result);
+        } catch (Exception e) {
+            resultMap.put("success", false);
+            resultMap.put("error", e.getMessage());
+        }
+        return resultMap;
+    }
+
+    public void sendRegistrationEmail(String domain) {
         try {
             // 读取HTML模板
             Resource resource = new ClassPathResource("domain_reg.html");
@@ -43,19 +83,15 @@ public class DomainServiceImpl implements DomainService {
 
             // 替换模板中的占位符
             String htmlContent = htmlTemplate
-                    .replace("{{domain}}", domain)
-                    .replace("{{registrar}}", String.valueOf(whoisData.getOrDefault("LLC", "N/A")))
-                    .replace("{{regDate}}", String.valueOf(whoisData.getOrDefault("reg_date", "N/A")))
-                    .replace("{{expDate}}", String.valueOf(whoisData.getOrDefault("exp_date", "N/A")))
-                    .replace("{{domainStatus}}", String.valueOf(whoisData.getOrDefault("domain_status", "N/A")));
+                    .replace("{{domain}}", domain);
 
             // 创建HTML邮件
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            helper.setTo("hello@custmax.com");
+            helper.setTo("1453631832@qq.com");
             helper.setSubject("Domain Registration Request - " + domain);
-            helper.setText(htmlContent, true); // true表示HTML格式
+            helper.setText(htmlContent, true);
 
             mailSender.send(mimeMessage);
         } catch (Exception e) {

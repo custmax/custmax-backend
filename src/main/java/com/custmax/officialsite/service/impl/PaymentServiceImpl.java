@@ -5,13 +5,20 @@ import com.custmax.officialsite.dto.CreatePaymentIntentRequest;
 import com.custmax.officialsite.dto.ConfirmPaymentRequest;
 import com.custmax.officialsite.dto.PaymentRecordDTO;
 import com.custmax.officialsite.entity.PaymentHistory;
+import com.custmax.officialsite.entity.Subscription;
 import com.custmax.officialsite.mapper.PaymentHistoryMapper;
+import com.custmax.officialsite.mapper.SubscriptionMapper;
 import com.custmax.officialsite.payment.PaymentStrategyFactory;
 import com.custmax.officialsite.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +29,8 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentStrategyFactory paymentStrategyFactory;
     @Autowired
     private PaymentHistoryMapper paymentHistoryMapper;
+    @Autowired
+    private SubscriptionMapper subscriptionMapper;
 
     @Override
     public Map<String, Object> createPaymentIntent(CreatePaymentIntentRequest request) {
@@ -29,35 +38,36 @@ public class PaymentServiceImpl implements PaymentService {
                 .createPaymentIntent(request);
     }
 
+    @Override
     @Transactional
     public Map<String, Object> confirmPayment(ConfirmPaymentRequest request) {
-        // 1. 查询 Stripe 支付状态
-        boolean paid = stripeService.checkPaymentStatus(request.getSessionId());
-        if (!paid) {
-            throw new RuntimeException("支付未完成");
+        // 1. query stripe payment status
+        Map<String, Object> stripe = paymentStrategyFactory.getStrategy("stripe").confirmPayment(request);
+        Long subscriptionId = Long.valueOf(String.valueOf(stripe.get("subscriptionId")));
+        if (stripe.isEmpty()) {
+            throw new RuntimeException("Payment confirmation failed");
         }
 
-        // 2. 激活订阅
-        Subscription subscription = subscriptionRepository.findById(request.getSubscriptionId());
-        subscription.setStatus("active");
-        subscription.setStartDate(new Date());
-        // 这里可以根据业务设置 endDate、renewalDate 等
-        subscription.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        subscriptionRepository.save(subscription);
-
-        // 3. 写入支付历史
+        // 3. write payment history
+        Subscription subscription = subscriptionMapper.selectById(subscriptionId);
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setUserId(subscription.getUserId());
         paymentHistory.setSubscriptionId(subscription.getId());
-        paymentHistory.setAmount(request.getAmount());
+        BigDecimal amount = new BigDecimal(String.valueOf(stripe.get("amount")));
+        paymentHistory.setAmount(amount.divide(BigDecimal.valueOf(100)));
         paymentHistory.setCurrency("USD");
         paymentHistory.setPaymentMethod("stripe");
         paymentHistory.setPaymentId(request.getSessionId());
         paymentHistory.setStatus("completed");
-        paymentHistory.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        paymentHistoryRepository.save(paymentHistory);
+        paymentHistory.setCreatedAt(new Timestamp(new Date().getTime()));
+        paymentHistoryMapper.insert(paymentHistory);
 
-        // 4. 返回结果
+        // 3. activate subscription
+
+        subscription.setStatus("active");
+        subscriptionMapper.updateById(subscription);
+
+        // 4. return result
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("subscriptionId", subscription.getId());

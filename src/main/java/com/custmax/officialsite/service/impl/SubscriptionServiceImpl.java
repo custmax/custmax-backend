@@ -1,27 +1,34 @@
 package com.custmax.officialsite.service.impl;
 
+import com.custmax.officialsite.dto.*;
+import com.custmax.officialsite.entity.CustomUserDetails;
+import com.custmax.officialsite.entity.SubscriptionDiscountPolicy;
+import com.custmax.officialsite.mapper.DiscountPolicyMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.custmax.officialsite.dto.CreatePaymentIntentRequest;
-import com.custmax.officialsite.dto.SubscriptionPlanRequest;
-import com.custmax.officialsite.dto.SubscriptionServiceRequest;
-import com.custmax.officialsite.dto.UpdateSubscriptionRequest;
 import com.custmax.officialsite.entity.Subscription;
 import com.custmax.officialsite.mapper.PlanMapper;
 import com.custmax.officialsite.mapper.SubscriptionMapper;
 import com.custmax.officialsite.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import com.custmax.officialsite.entity.Plan;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
     @Autowired
     private SubscriptionMapper subscriptionMapper;
 
+    @Autowired
+    private DiscountPolicyMapper discountPolicyMapper;
     @Autowired
     private PlanMapper planMapper;
 
@@ -40,21 +47,73 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public Map<String, Object> subscribeToPlan(SubscriptionPlanRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // 1. Check if user already has an active or pending subscription
+        LambdaQueryWrapper<Subscription> query = new LambdaQueryWrapper<>();
+        query.eq(Subscription::getUserId, userDetails.getUserId())
+                .in(Subscription::getStatus, "active", "pending")
+                .gt(Subscription::getEndDate, LocalDateTime.now());
+        Subscription existing = subscriptionMapper.selectOne(query);
+        boolean isRenewal = existing != null;
+
+        // 2. Get plan info
+        LambdaQueryWrapper<Plan> planQuery = new LambdaQueryWrapper<>();
+        planQuery.eq(Plan::getId, request.getPlanId());
+        Plan plan = planMapper.selectOne(planQuery);
+
+        // 3. Get discount policies
+        List<SubscriptionDiscountPolicy> policies = discountPolicyMapper.selectList(null);
+        Map<String, SubscriptionDiscountPolicy> policyMap = policies.stream()
+                .collect(Collectors.toMap(SubscriptionDiscountPolicy::getPolicyKey, p -> p));
+
+        // 4. Calculate final amount
+        BigDecimal price = plan.getPrice();
+        BigDecimal finalAmount = price;
+        int duration = request.getDuration() != null ? request.getDuration() : 1;
+        String planType = request.getPlanType();
+
+        if ("ANNUAL".equalsIgnoreCase(planType)) {
+            BigDecimal discount = new BigDecimal(policyMap.get("annual_discount_rate").getPolicyValue());
+            finalAmount = price.multiply(BigDecimal.ONE.subtract(discount)).multiply(BigDecimal.valueOf(duration));
+        } else if ("MONTHLY".equalsIgnoreCase(planType)) {
+            int firstMonths = Integer.parseInt(policyMap.get("monthly_first3_months").getPolicyValue());
+            BigDecimal firstMonthPrice = new BigDecimal(policyMap.get("monthly_first3_price").getPolicyValue());
+            if (!isRenewal && duration > 0) {
+                int discountMonths = Math.min(duration, firstMonths);
+                int normalMonths = duration - discountMonths;
+                finalAmount = firstMonthPrice.multiply(BigDecimal.valueOf(discountMonths))
+                        .add(price.multiply(BigDecimal.valueOf(normalMonths)));
+            } else {
+                finalAmount = price.multiply(BigDecimal.valueOf(duration));
+            }
+        }
+
+        // 5. Set end date
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime endDate = startDate;
+        if ("ANNUAL".equalsIgnoreCase(planType)) {
+            endDate = endDate.plusYears(duration);
+        } else if ("MONTHLY".equalsIgnoreCase(planType)) {
+            endDate = endDate.plusMonths(duration);
+        }
+
+        // 6. Create subscription
         Subscription subscription = new Subscription();
-        subscription.setUserId(request.getUserId());
+        subscription.setUserId(userDetails.getUserId());
         subscription.setPlanId(request.getPlanId());
         subscription.setStatus("pending");
-        subscription.setStartDate(LocalDateTime.now());
+        subscription.setStartDate(startDate);
+        subscription.setEndDate(endDate);
         subscription.setAutoRenew(Boolean.TRUE.equals(request.getAutoRenew()));
         subscription.setPaymentMethod(request.getPaymentMethod());
-        subscription.setCancelAtPeriodEnd(false);
+        subscription.setCancelAtPeriodEnd(true);
         subscriptionMapper.insert(subscription);
 
+        // 7. Create payment intent
         CreatePaymentIntentRequest paymentRequest = new CreatePaymentIntentRequest();
-        LambdaQueryWrapper<Plan> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Plan::getId, request.getPlanId());
-        Plan plan = planMapper.selectOne(lambdaQueryWrapper);
-        paymentRequest.setAmount(plan.getPrice());
+        paymentRequest.setAmount(finalAmount);
         paymentRequest.setPaymentMethod(request.getPaymentMethod());
         paymentRequest.setSubscriptionId(subscription.getId());
         paymentRequest.setCurrency("usd");
@@ -65,7 +124,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setPaymentId(paymentId);
         subscriptionMapper.updateById(subscription);
 
-        // 4. 返回结果
+        // 8. Return result
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("subscriptionId", subscription.getId());
@@ -76,5 +135,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public Map<String, Object> cancelSubscription(String subscriptionId) {
         return Map.of();
+    }
+
+    @Override
+    public List<SubscriptionDTO> getCurrentUserSubscriptions() {
+        return List.of();
     }
 }

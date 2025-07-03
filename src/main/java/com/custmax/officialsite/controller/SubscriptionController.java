@@ -1,5 +1,6 @@
 package com.custmax.officialsite.controller;
 
+import com.custmax.officialsite.dto.SubscriptionDTO;
 import com.custmax.officialsite.dto.SubscriptionPlanRequest;
 import com.custmax.officialsite.dto.SubscriptionServiceRequest;
 import com.custmax.officialsite.dto.UpdateSubscriptionRequest;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -64,4 +66,11 @@ public class SubscriptionController {
         Map<String, Object> response = subscriptionService.cancelSubscription(subscriptionId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/me/subscription")
+    public List<SubscriptionDTO> getUserSubscriptions() {
+        return subscriptionService.getCurrentUserSubscriptions();
+    }
+
+
 }

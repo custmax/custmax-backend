@@ -53,6 +53,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
                                     )
                                     .build()
                     )
+                    .putMetadata("subscriptionId", String.valueOf(request.getSubscriptionId()))
                     .build();
 
             Session session = Session.create(params);
@@ -70,9 +71,12 @@ public class StripePaymentStrategy implements PaymentStrategy {
     public Map<String, Object> confirmPayment(ConfirmPaymentRequest request) {
         try {
             Session session = Session.retrieve(request.getSessionId());
+            Map<String, String> metadata = session.getMetadata();
             Map<String, Object> result = new HashMap<>();
             result.put("status", session.getPaymentStatus());
+            result.put("subscriptionId", metadata.get("subscriptionId"));
             result.put("customer", session.getCustomer());
+            result.put("amount", session.getAmountTotal());
             return result;
         } catch (Exception e) {
             throw new RuntimeException("Stripe confirm payment failed", e);
