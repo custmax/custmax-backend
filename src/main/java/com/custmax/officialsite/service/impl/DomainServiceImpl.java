@@ -75,7 +75,7 @@ public class DomainServiceImpl implements DomainService {
         return resultMap;
     }
 
-    public void sendRegistrationEmail(String domain) {
+    public void sendRegistrationEmail(String domain, String emailReceiver) {
         try {
             // 读取HTML模板
             Resource resource = new ClassPathResource("domain_reg.html");
