@@ -1,7 +1,8 @@
 // src/main/java/com/custmax/officialsite/payment/PaymentStrategy.java
 package com.custmax.officialsite.payment;
 
-import com.custmax.officialsite.dto.ConfirmPaymentRequest;
+import com.custmax.officialsite.dto.payment.ConfirmPaymentRequest;
+import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
 
 import java.util.Map;
 

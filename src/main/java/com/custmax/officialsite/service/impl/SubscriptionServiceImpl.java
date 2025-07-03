@@ -1,19 +1,23 @@
 package com.custmax.officialsite.service.impl;
 
-import com.custmax.officialsite.dto.*;
-import com.custmax.officialsite.entity.CustomUserDetails;
-import com.custmax.officialsite.entity.SubscriptionDiscountPolicy;
+import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
+import com.custmax.officialsite.dto.subscription.SubscriptionDTO;
+import com.custmax.officialsite.dto.subscription.SubscriptionPlanRequest;
+import com.custmax.officialsite.dto.subscription.SubscriptionServiceRequest;
+import com.custmax.officialsite.dto.subscription.UpdateSubscriptionRequest;
+import com.custmax.officialsite.entity.user.CustomUserDetails;
+import com.custmax.officialsite.entity.subscription.SubscriptionDiscountPolicy;
 import com.custmax.officialsite.mapper.DiscountPolicyMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.custmax.officialsite.entity.Subscription;
+import com.custmax.officialsite.entity.subscription.Subscription;
 import com.custmax.officialsite.mapper.PlanMapper;
 import com.custmax.officialsite.mapper.SubscriptionMapper;
 import com.custmax.officialsite.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import com.custmax.officialsite.entity.Plan;
+import com.custmax.officialsite.entity.subscription.Plan;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

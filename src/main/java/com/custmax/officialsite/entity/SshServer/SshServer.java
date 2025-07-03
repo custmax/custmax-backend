@@ -1,4 +1,4 @@
-package com.custmax.officialsite.entity;
+package com.custmax.officialsite.entity.SshServer;
 
 import lombok.Data;
 import java.time.LocalDateTime;

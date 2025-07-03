@@ -1,12 +1,13 @@
-package com.custmax.officialsite.entity;
+// src/main/java/com/custmax/officialsite/entity/Role.java
+package com.custmax.officialsite.entity.user;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("permissions")
-public class Permission {
+@TableName("roles")
+public class Role {
     @TableId(type = IdType.AUTO)
     private Long id;
 
@@ -16,10 +17,6 @@ public class Permission {
     private String displayName;
 
     private String description;
-
-    private String resource;
-
-    private String action;
 
     @TableField("is_system")
     private Boolean isSystem;
@@ -31,4 +28,7 @@ public class Permission {
 
     @TableField("updated_at")
     private LocalDateTime updatedAt;
+
+    @TableField("created_by")
+    private Long createdBy;
 }

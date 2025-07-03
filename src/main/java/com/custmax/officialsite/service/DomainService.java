@@ -1,5 +1,7 @@
 package com.custmax.officialsite.service;
 
+import com.custmax.officialsite.dto.website.RegisterDomainRequest;
+
 import java.util.Map;
 
 public interface DomainService {

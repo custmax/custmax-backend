@@ -1,6 +1,7 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.entity.User;
+import com.custmax.officialsite.dto.payment.PaymentRecordDTO;
+import com.custmax.officialsite.entity.user.User;
 import com.custmax.officialsite.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,11 @@
 // src/main/java/com/custmax/officialsite/service/impl/PaymentServiceImpl.java
 package com.custmax.officialsite.service.impl;
 
-import com.custmax.officialsite.dto.ConfirmPaymentRequest;
-import com.custmax.officialsite.entity.PaymentHistory;
-import com.custmax.officialsite.entity.Subscription;
+import com.custmax.officialsite.dto.payment.ConfirmPaymentRequest;
+import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
+import com.custmax.officialsite.dto.payment.PaymentRecordDTO;
+import com.custmax.officialsite.entity.payment.PaymentHistory;
+import com.custmax.officialsite.entity.subscription.Subscription;
 import com.custmax.officialsite.mapper.PaymentHistoryMapper;
 import com.custmax.officialsite.mapper.SubscriptionMapper;
 import com.custmax.officialsite.payment.PaymentStrategyFactory;

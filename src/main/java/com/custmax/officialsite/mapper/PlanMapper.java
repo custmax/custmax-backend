@@ -1,7 +1,7 @@
 package com.custmax.officialsite.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.custmax.officialsite.entity.Plan;
+import com.custmax.officialsite.entity.subscription.Plan;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

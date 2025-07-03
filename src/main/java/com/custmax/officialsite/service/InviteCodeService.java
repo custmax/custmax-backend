@@ -1,7 +1,7 @@
 package com.custmax.officialsite.service;
 
 import com.custmax.officialsite.dto.user.ClaimInviteCodeResponse;
-import com.custmax.officialsite.entity.InviteCode;
+import com.custmax.officialsite.entity.invite.InviteCode;
 
 public interface InviteCodeService {
     ClaimInviteCodeResponse claim(String email);

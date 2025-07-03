@@ -1,5 +1,5 @@
 // 自定义 UserDetails 实现类
-package com.custmax.officialsite.entity;
+package com.custmax.officialsite.entity.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

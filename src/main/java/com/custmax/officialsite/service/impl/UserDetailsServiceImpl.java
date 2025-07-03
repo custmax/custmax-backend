@@ -1,8 +1,8 @@
 package com.custmax.officialsite.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.custmax.officialsite.entity.CustomUserDetails;
-import com.custmax.officialsite.entity.User;
+import com.custmax.officialsite.entity.user.CustomUserDetails;
+import com.custmax.officialsite.entity.user.User;
 import com.custmax.officialsite.mapper.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

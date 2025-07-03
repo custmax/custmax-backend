@@ -1,4 +1,4 @@
-package com.custmax.officialsite.entity;
+package com.custmax.officialsite.entity.payment;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

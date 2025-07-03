@@ -1,6 +1,6 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.entity.InviteCode;
+import com.custmax.officialsite.entity.invite.InviteCode;
 import com.custmax.officialsite.service.InviteCodeService;
 import org.springframework.web.bind.annotation.*;
 import com.custmax.officialsite.dto.user.ClaimInviteCodeResponse;

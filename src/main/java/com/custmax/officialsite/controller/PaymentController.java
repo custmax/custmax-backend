@@ -1,6 +1,6 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.ConfirmPaymentRequest;
+import com.custmax.officialsite.dto.payment.ConfirmPaymentRequest;
 import com.custmax.officialsite.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

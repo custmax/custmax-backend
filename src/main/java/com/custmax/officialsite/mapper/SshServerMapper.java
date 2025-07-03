@@ -1,7 +1,7 @@
 package com.custmax.officialsite.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.custmax.officialsite.entity.SshServer;
+import com.custmax.officialsite.entity.SshServer.SshServer;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

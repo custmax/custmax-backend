@@ -1,8 +1,12 @@
 package com.custmax.officialsite.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.custmax.officialsite.entity.User;
-import com.custmax.officialsite.entity.InviteCode;
+import com.custmax.officialsite.dto.subscription.SubscriptionDTO;
+import com.custmax.officialsite.dto.user.LoginResponse;
+import com.custmax.officialsite.dto.website.WebsiteDTO;
+import com.custmax.officialsite.entity.user.CustomUserDetails;
+import com.custmax.officialsite.entity.user.User;
+import com.custmax.officialsite.entity.invite.InviteCode;
 import com.custmax.officialsite.mapper.UserMapper;
 import com.custmax.officialsite.mapper.InviteCodeMapper;
 import com.custmax.officialsite.service.UserService;
@@ -79,8 +83,8 @@ public class UserServiceImpl implements UserService {
         String email;
         if (principal instanceof org.springframework.security.core.userdetails.User) {
             email = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else if (principal instanceof com.custmax.officialsite.entity.CustomUserDetails) {
-            email = ((com.custmax.officialsite.entity.CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof CustomUserDetails) {
+            email = ((CustomUserDetails) principal).getUsername();
         } else if (principal instanceof String) {
             email = (String) principal;
         } else {

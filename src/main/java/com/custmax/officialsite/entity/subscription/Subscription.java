@@ -1,4 +1,4 @@
-package com.custmax.officialsite.entity;
+package com.custmax.officialsite.entity.subscription;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.custmax.officialsite.entity;
+package com.custmax.officialsite.entity.website;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

@@ -1,6 +1,7 @@
-package com.custmax.officialsite.entity;
+package com.custmax.officialsite.entity.user;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.custmax.officialsite.entity.subscription.Subscription;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
