@@ -25,12 +25,13 @@ public class User {
     private String resetToken;
     @TableField("reset_token_expire")
     private LocalDateTime resetTokenExpire;
-    @TableField("subscription_id")
-    private Long subscriptionId;
 
     /**
      * User status: active, suspended, banned
      */
+    public enum Status {
+        active, suspended, banned
+    }
 
     private String status;
     @TableField("status_reason")

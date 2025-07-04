@@ -1,8 +1,11 @@
 package com.custmax.officialsite.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.custmax.officialsite.dto.website.RegisterDomainRequest;
 import com.custmax.officialsite.entity.SshServer.SshServer;
+import com.custmax.officialsite.entity.domain.Domain;
+import com.custmax.officialsite.mapper.DomainMapper;
 import com.custmax.officialsite.mapper.SshServerMapper;
 import com.custmax.officialsite.service.DomainService;
 import com.custmax.officialsite.util.SshExecutor;
@@ -36,6 +39,11 @@ public class DomainServiceImpl implements DomainService {
     @Autowired
     private SshServerMapper sshServerMapper;
 
+    @Autowired
+    private DomainMapper domainMapper;
+
+
+    @Override
     public Map<String, Object> queryWhois(String domain) {
         String url = "https://uapis.cn/api/whois.php?domain=" + domain;
         try {
@@ -75,6 +83,15 @@ public class DomainServiceImpl implements DomainService {
         return resultMap;
     }
 
+    @Override
+    public Boolean checkDomainAvailability(String domainName) {
+        LambdaQueryWrapper<Domain> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Domain::getDomainName, domainName);
+        Long count = domainMapper.selectCount(queryWrapper);
+        return count.equals(0L);
+    }
+
+    @Override
     public void sendRegistrationEmail(String domain, String emailReceiver) {
         try {
             // 读取HTML模板

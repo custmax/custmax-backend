@@ -98,7 +98,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime endDate = startDate;
         if ("ANNUAL".equalsIgnoreCase(planType)) {
-            endDate = endDate.plusYears(duration);
+            endDate = endDate.plusMonths(duration);
         } else if ("MONTHLY".equalsIgnoreCase(planType)) {
             endDate = endDate.plusMonths(duration);
         }

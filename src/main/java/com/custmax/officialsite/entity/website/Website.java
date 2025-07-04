@@ -50,4 +50,11 @@ public class Website {
 
     @TableField("moderated_by")
     private Long moderatedBy;
+
+    @TableField("industry")
+    private String industry;
+
+    public enum Status {
+        draft, published, archived;
+    }
 }

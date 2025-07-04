@@ -1,6 +1,7 @@
 package com.custmax.officialsite.controller;
 
 import com.custmax.officialsite.dto.website.CreateWebsiteRequest;
+import com.custmax.officialsite.dto.website.CreateWebsiteResponse;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.service.impl.WebSiteServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,9 +30,9 @@ public class WebSiteController {
      */
     @Operation(summary = "Create a new WordPress website")
     @PostMapping("/websites")
-    public ResponseEntity<?> createWebsite(@RequestBody CreateWebsiteRequest request,
-                                           @AuthenticationPrincipal CustomUserDetails user) {
-        Object result = webSiteService.createWebsite(request, user.getUserId());
+    public ResponseEntity<CreateWebsiteResponse> createWebsite(@RequestBody CreateWebsiteRequest request,
+                                                               @AuthenticationPrincipal CustomUserDetails user) {
+        CreateWebsiteResponse result = webSiteService.createWebsite(request, user.getUserId());
         return ResponseEntity.ok(result);
     }
 

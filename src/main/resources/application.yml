@@ -59,3 +59,5 @@ website:
 
 domain:
   email-receiver: 1453631832@qq.com
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

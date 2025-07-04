@@ -190,4 +190,15 @@ public class DomainController {
         response.put("results", results);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Checks if a specific domain name is available.
+     * @param domainName
+     * @return
+     */
+    @GetMapping("/domains/availability")
+    @Operation(summary = "Check if a specific domain name is available")
+    public ResponseEntity<Boolean> checkDomainAvailability(@RequestParam String domainName) {
+        return ResponseEntity.ok(domainService.checkDomainAvailability(domainName));
+    }
 }
