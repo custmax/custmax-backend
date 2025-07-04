@@ -5,6 +5,8 @@ import com.custmax.officialsite.dto.subscription.SubscriptionPlanRequest;
 import com.custmax.officialsite.dto.subscription.SubscriptionServiceRequest;
 import com.custmax.officialsite.dto.subscription.UpdateSubscriptionRequest;
 import com.custmax.officialsite.service.impl.SubscriptionServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Subscription Management", description = "Manage user subscriptions to plans and services")
 public class SubscriptionController {
 
     @Autowired
@@ -25,6 +28,8 @@ public class SubscriptionController {
      * @param request
      * @return
      */
+
+    @Operation(summary = "Subscribe user to a specific plan (Free/Paid/Enterprise)")
     @PostMapping("/subscriptions/plan")
     public ResponseEntity<Map<String, Object>> subscribeToPlan(@RequestBody SubscriptionPlanRequest request) {
         Map<String, Object> response = subscriptionService.subscribeToPlan(request);
@@ -36,6 +41,7 @@ public class SubscriptionController {
      * @param request 包含服务订阅信息的请求体
      * @return 包含订阅结果的响应体
      */
+    @Operation(summary = "Subscribe user to a value-added service")
     @PostMapping("/subscriptions/service")
     public ResponseEntity<Map<String, Object>> subscribeToService(@RequestBody SubscriptionServiceRequest request) {
         Map<String, Object> response = subscriptionService.subscribeToService(request);
@@ -48,6 +54,7 @@ public class SubscriptionController {
      * @param request
      * @return
      */
+    @Operation(summary = "Upgrade/downgrade subscription plan or modify services")
     @PutMapping("/subscriptions/{subscriptionId}")
     public ResponseEntity<Map<String, Object>> updateSubscription(
             @PathVariable String subscriptionId,
@@ -61,12 +68,18 @@ public class SubscriptionController {
      * @param subscriptionId
      * @return
      */
+    @Operation(summary = "Cancel a specific subscription or service")
     @DeleteMapping("/subscriptions/{subscriptionId}")
     public ResponseEntity<Map<String, Object>> cancelSubscription(@PathVariable String subscriptionId) {
         Map<String, Object> response = subscriptionService.cancelSubscription(subscriptionId);
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Get all subscriptions for the current user
+     * @return List of SubscriptionDTO objects representing the user's subscriptions
+     */
+    @Operation(summary = "Get all subscriptions for the current user")
     @GetMapping("/me/subscription")
     public List<SubscriptionDTO> getUserSubscriptions() {
         return subscriptionService.getCurrentUserSubscriptions();
