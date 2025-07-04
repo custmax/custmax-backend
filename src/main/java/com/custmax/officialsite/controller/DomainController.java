@@ -2,6 +2,8 @@ package com.custmax.officialsite.controller;
 
 import com.custmax.officialsite.dto.website.RegisterDomainRequest;
 import com.custmax.officialsite.service.DomainService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +13,20 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Domain Management", description = "Manage domain registrations and settings")
 public class DomainController {
 
     @Autowired
     private DomainService domainService;
 
+    /**
+     * Registers a new domain and sends an email to the administrator.
+     * @param request
+     * @return
+     */
+    @Operation(summary = "Register a new domain")
     @PostMapping("/domains")
-    public ResponseEntity<Map<String, Object>> registerDomain(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> registerDomain(@RequestBody Map<String, Object> request) {
         String domainName = (String) request.get("domainName");
 
         if (domainName == null || domainName.trim().isEmpty()) {
@@ -46,8 +55,14 @@ public class DomainController {
         }
     }
 
+    /**
+     * Get details of a specific domain by its ID.
+     * @param id
+     * @return
+     */
+    @Operation(summary = "Get domain details")
     @GetMapping("/domains/{id}")
-    public ResponseEntity<Map<String, Object>> getDomainDetails(@PathVariable String id) {
+    public ResponseEntity<?> getDomainDetails(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         response.put("domainId", id);
         response.put("domainName", "example.com");
@@ -63,6 +78,12 @@ public class DomainController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Updates the settings of an existing domain.
+     * @param request
+     * @return
+     */
+    @Operation(summary = "Update domain settings")
     @PutMapping("/domains")
     public ResponseEntity<Map<String, Object>> updateDomainSettings(
             @RequestBody RegisterDomainRequest request) {
@@ -74,6 +95,12 @@ public class DomainController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Deletes a domain by its ID.
+     * @param id
+     * @return
+     */
+    @Operation(summary = "Delete a domain")
     @DeleteMapping("/domains/{id}")
     public ResponseEntity<Map<String, Object>> deleteDomain(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
@@ -84,6 +111,10 @@ public class DomainController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Maps a domain to a specific website by their IDs.
+     */
+    @Operation(summary = "Map domain to a website")
     @PostMapping("/websites/{websiteId}/domains/{domainId}")
     public ResponseEntity<Map<String, Object>> mapDomainToWebsite(
             @PathVariable String websiteId,
@@ -97,6 +128,10 @@ public class DomainController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Unmaps a domain from a specific website by their IDs.
+     */
+    @Operation(summary = "Configure SSL for a domain")
     @PostMapping("/domains/{id}/ssl")
     public ResponseEntity<Map<String, Object>> configureSsl(
             @PathVariable String id,
@@ -112,6 +147,12 @@ public class DomainController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Searches for domain availability across multiple TLDs.
+     * @param name
+     * @return
+     */
+    @Operation(summary = "Search domain availability")
     @GetMapping("/domains/search")
     public ResponseEntity<Map<String, Object>> searchDomainAvailability(@RequestParam String name) {
         List<String> tlds = Arrays.asList("com", "net", "cn", "org", "io");
