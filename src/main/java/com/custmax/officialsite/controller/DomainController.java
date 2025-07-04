@@ -5,6 +5,7 @@ import com.custmax.officialsite.service.DomainService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,17 @@ public class DomainController {
     @Autowired
     private DomainService domainService;
 
+    @Value("${domain.email-receiver}")
+    private String emailReceiver;
+
     /**
-     * Registers a new domain and sends an email to the administrator.
-     * @param request
-     * @return
+     * Registers a new domain by sending an email to the administrator.
+     * @param request contains the domain name to register
+     * @return ResponseEntity with registration status and details
      */
-    @Operation(summary = "Register a new domain")
     @PostMapping("/domains")
-    public ResponseEntity<?> registerDomain(@RequestBody Map<String, Object> request) {
+    @Operation(summary = "Register a new domain")
+    public ResponseEntity<Map<String, Object>> registerDomain(@RequestBody Map<String, Object> request) {
         String domainName = (String) request.get("domainName");
 
         if (domainName == null || domainName.trim().isEmpty()) {
@@ -38,8 +42,7 @@ public class DomainController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Send email to hello@custmax.com
-            domainService.sendRegistrationEmail(domainName);
+            domainService.sendRegistrationEmail(domainName, emailReceiver);
             response.put("domainId", "dom_" + System.currentTimeMillis());
             response.put("domainName", domainName);
             response.put("status", "pending");
@@ -56,13 +59,13 @@ public class DomainController {
     }
 
     /**
-     * Get details of a specific domain by its ID.
+     * Retrieves details of a specific domain by its ID.
      * @param id
      * @return
      */
-    @Operation(summary = "Get domain details")
     @GetMapping("/domains/{id}")
-    public ResponseEntity<?> getDomainDetails(@PathVariable String id) {
+    @Operation(summary = "Get domain details by ID")
+    public ResponseEntity<Map<String, Object>> getDomainDetails(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         response.put("domainId", id);
         response.put("domainName", "example.com");
@@ -79,12 +82,12 @@ public class DomainController {
     }
 
     /**
-     * Updates the settings of an existing domain.
-     * @param request
-     * @return
+     * Updates domain settings such as nameservers and DNS records.
+     * @param request contains the updated domain settings
+     * @return ResponseEntity with update status and details
      */
-    @Operation(summary = "Update domain settings")
     @PutMapping("/domains")
+    @Operation(summary = "Update domain settings")
     public ResponseEntity<Map<String, Object>> updateDomainSettings(
             @RequestBody RegisterDomainRequest request) {
         Map<String, Object> response = domainService.updateDomainSettings(request);
@@ -98,10 +101,10 @@ public class DomainController {
     /**
      * Deletes a domain by its ID.
      * @param id
-     * @return
+     * @return ResponseEntity with deletion status and details
      */
-    @Operation(summary = "Delete a domain")
     @DeleteMapping("/domains/{id}")
+    @Operation(summary = "Delete a domain by ID")
     public ResponseEntity<Map<String, Object>> deleteDomain(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         response.put("domainId", id);
@@ -112,10 +115,13 @@ public class DomainController {
     }
 
     /**
-     * Maps a domain to a specific website by their IDs.
+     * Maps a domain to a website by their IDs.
+     * @param websiteId
+     * @param domainId
+     * @return ResponseEntity with mapping status and details
      */
-    @Operation(summary = "Map domain to a website")
     @PostMapping("/websites/{websiteId}/domains/{domainId}")
+    @Operation(summary = "Map a domain to a website")
     public ResponseEntity<Map<String, Object>> mapDomainToWebsite(
             @PathVariable String websiteId,
             @PathVariable String domainId) {
@@ -129,10 +135,13 @@ public class DomainController {
     }
 
     /**
-     * Unmaps a domain from a specific website by their IDs.
+     * Configures SSL for a domain.
+     * @param id
+     * @param request contains SSL configuration details
+     * @return ResponseEntity with SSL configuration status and details
      */
-    @Operation(summary = "Configure SSL for a domain")
     @PostMapping("/domains/{id}/ssl")
+    @Operation(summary = "Configure SSL for a domain")
     public ResponseEntity<Map<String, Object>> configureSsl(
             @PathVariable String id,
             @RequestBody Map<String, Object> request) {
@@ -149,11 +158,11 @@ public class DomainController {
 
     /**
      * Searches for domain availability across multiple TLDs.
-     * @param name
-     * @return
+     * @param name The base domain name to check
+     * @return ResponseEntity with availability results for each TLD
      */
-    @Operation(summary = "Search domain availability")
     @GetMapping("/domains/search")
+    @Operation(summary = "Search domain availability across multiple TLDs")
     public ResponseEntity<Map<String, Object>> searchDomainAvailability(@RequestParam String name) {
         List<String> tlds = Arrays.asList("com", "net", "cn", "org", "io");
         List<Map<String, Object>> results = new ArrayList<>();

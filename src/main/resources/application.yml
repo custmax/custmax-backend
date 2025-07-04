@@ -56,3 +56,6 @@ website:
   wpcli:
     host: 172.237.149.194
     path: /var/www/wordpress
+
+domain:
+  email-receiver: 1453631832@qq.com

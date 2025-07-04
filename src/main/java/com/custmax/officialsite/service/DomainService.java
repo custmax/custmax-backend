@@ -5,7 +5,7 @@ import com.custmax.officialsite.dto.website.RegisterDomainRequest;
 import java.util.Map;
 
 public interface DomainService {
-    void sendRegistrationEmail(String domainName);
+    void sendRegistrationEmail(String domainName, String emailReceiver);
 
     Map<String, Object> queryWhois(String domainName);
 
