@@ -31,7 +31,7 @@ public class Website {
     @TableField("is_multisite")
     private Boolean isMultisite;
 
-    private String status;
+    private Status status;
 
     @TableField("created_at")
     private Timestamp createdAt;

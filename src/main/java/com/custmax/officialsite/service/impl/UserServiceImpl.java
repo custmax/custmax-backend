@@ -1,12 +1,14 @@
 package com.custmax.officialsite.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.custmax.officialsite.dto.subscription.SubscriptionDTO;
+import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.user.LoginResponse;
 import com.custmax.officialsite.dto.website.WebsiteDTO;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.entity.user.User;
 import com.custmax.officialsite.entity.invite.InviteCode;
+import com.custmax.officialsite.mapper.PlanMapper;
+import com.custmax.officialsite.mapper.SubscriptionMapper;
 import com.custmax.officialsite.mapper.UserMapper;
 import com.custmax.officialsite.mapper.InviteCodeMapper;
 import com.custmax.officialsite.service.UserService;
@@ -16,13 +18,18 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +38,11 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private SubscriptionMapper subscriptionMapper;
+    @Resource
+    private PlanMapper planMapper;
 
     @Resource
     private InviteCodeMapper inviteCodeMapper;
@@ -48,7 +60,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("邮箱已注册");
         }
         User user = new User();
-        user.setEmail(email);
+        user.setUsername(email);
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setUsername(username);
         user.setInvitedByCode(inviteCode);
@@ -66,11 +78,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(String email, String password) {
-        User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("username", email));
         if (user == null || !passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new IllegalArgumentException("Email or password error");
         }
-        String token = JwtUtil.generateToken(user.getEmail());
+        String token = JwtUtil.generateToken(user.getUsername());
         LoginResponse loginResponse = new LoginResponse();
         BeanUtils.copyProperties(user, loginResponse);
         loginResponse.setToken(token);
@@ -92,6 +104,7 @@ public class UserServiceImpl implements UserService {
         }
         return userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
     }
+
 
     @Override
     public void sendResetPasswordEmail(String email) {
@@ -132,7 +145,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<SubscriptionDTO> getCurrentUserSubscriptions() {
+    public List<SubscriptionResponse> getCurrentUserSubscriptions() {
         return List.of();
     }
 

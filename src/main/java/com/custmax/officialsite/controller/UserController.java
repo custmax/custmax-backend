@@ -1,14 +1,17 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.subscription.SubscriptionDTO;
+import com.custmax.officialsite.dto.domain.DomainReponse;
+import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.user.LoginRequest;
 import com.custmax.officialsite.dto.user.LoginResponse;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.entity.user.User;
+import com.custmax.officialsite.service.DomainService;
 import com.custmax.officialsite.service.UserService;
 import com.custmax.officialsite.service.WebSiteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,8 @@ public class UserController {
 
     @Resource
     private WebSiteService webSiteService;
+    @Autowired
+    private DomainService domainService;
 
     /** Registers a new user with the provided email, password, username, and invite code.
      * @param email User's email address
@@ -87,7 +92,7 @@ public class UserController {
      */
     @Operation(summary = "Get current user details with authentication")
     @GetMapping("/me/subscription")
-    public List<SubscriptionDTO> getUserSubscriptions() {
+    public List<SubscriptionResponse> getUserSubscriptions() {
         return userService.getCurrentUserSubscriptions();
     }
 
@@ -97,8 +102,8 @@ public class UserController {
      */
     @Operation(summary = "Get current user domains")
     @GetMapping("/me/domains")
-    public List<String> getUserDomains() {
-        return userService.getCurrentUserDomains();
+    public ResponseEntity<List<DomainReponse>> getUserDomains(@AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(domainService.getCurrentUserDomains(user));
     }
 
     /**
@@ -107,7 +112,7 @@ public class UserController {
      * @return A list of websites for the user
      */
     @Operation(summary = "List websites for the current user")
-    @GetMapping("/users/me/websites")
+    @GetMapping("/me/websites")
     public ResponseEntity<?> listUserWebsites(@AuthenticationPrincipal CustomUserDetails user) {
         List<?> websites = webSiteService.listUserWebsites(user.getUserId());
         return ResponseEntity.ok(websites);

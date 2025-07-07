@@ -192,7 +192,7 @@ public class DomainController {
     }
 
     /**
-     * Checks if a specific domain name is available.
+     * Checks if a specific domain name is available in .chtrak.com TLD.
      * @param domainName
      * @return
      */

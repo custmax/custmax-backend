@@ -5,4 +5,6 @@ import com.custmax.officialsite.entity.user.User;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface UserMapper extends BaseMapper<User> {}
+public interface UserMapper extends BaseMapper<User> {
+    String getPlanNameByUsername(String username);
+}

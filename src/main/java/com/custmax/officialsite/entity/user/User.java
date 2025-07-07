@@ -11,10 +11,10 @@ import java.util.List;
 public class User {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private String email;
+    private String username;
     @TableField("password_hash")
     private String passwordHash;
-    private String username;
+    private String nickname;
     @TableField("invited_by_code")
     private String invitedByCode;
     @TableField("created_at")
@@ -33,7 +33,7 @@ public class User {
         active, suspended, banned
     }
 
-    private String status;
+    private Status status;
     @TableField("status_reason")
     private String statusReason;
     @TableField("status_changed_at")

@@ -1,13 +1,15 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.subscription.SubscriptionDTO;
+import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.subscription.SubscriptionPlanRequest;
 import com.custmax.officialsite.dto.subscription.SubscriptionServiceRequest;
 import com.custmax.officialsite.dto.subscription.UpdateSubscriptionRequest;
+import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.service.impl.SubscriptionServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +83,8 @@ public class SubscriptionController {
      */
     @Operation(summary = "Get all subscriptions for the current user")
     @GetMapping("/me/subscription")
-    public List<SubscriptionDTO> getUserSubscriptions() {
-        return subscriptionService.getCurrentUserSubscriptions();
+    public ResponseEntity<List<SubscriptionResponse>> getUserSubscriptions(@AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(subscriptionService.getCurrentUserSubscriptions(user));
     }
 
 

@@ -1,7 +1,7 @@
 package com.custmax.officialsite.service.impl;
 
 import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
-import com.custmax.officialsite.dto.subscription.SubscriptionDTO;
+import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.subscription.SubscriptionPlanRequest;
 import com.custmax.officialsite.dto.subscription.SubscriptionServiceRequest;
 import com.custmax.officialsite.dto.subscription.UpdateSubscriptionRequest;
@@ -107,7 +107,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = new Subscription();
         subscription.setUserId(userDetails.getUserId());
         subscription.setPlanId(request.getPlanId());
-        subscription.setStatus("pending");
+        subscription.setStatus(Subscription.Status.pending);
         subscription.setStartDate(startDate);
         subscription.setEndDate(endDate);
         subscription.setAutoRenew(Boolean.TRUE.equals(request.getAutoRenew()));
@@ -142,7 +142,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public List<SubscriptionDTO> getCurrentUserSubscriptions() {
-        return List.of();
+    public List<SubscriptionResponse> getCurrentUserSubscriptions(CustomUserDetails user) {
+        LambdaQueryWrapper<Subscription> query = new LambdaQueryWrapper<>();
+        query.eq(Subscription::getUserId, user.getUserId())
+                .orderByDesc(Subscription::getStartDate);
+        List<Subscription> subscriptions = subscriptionMapper.selectList(query);
+
+        return subscriptions.stream().map(subscription -> {
+            SubscriptionResponse response = new SubscriptionResponse();
+            Plan plan = planMapper.selectById(subscription.getPlanId());
+            response.setStatus(subscription.getStatus());
+            response.setPlanName(plan.getName());
+            response.setPlanDescription(plan.getDescription());
+            response.setStartTime(subscription.getStartDate());
+            response.setEndTime(subscription.getEndDate());
+            return response;
+        }).collect(Collectors.toList());
     }
 }

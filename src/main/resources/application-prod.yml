@@ -1,12 +1,27 @@
 spring:
   datasource:
-    url: jdbc:mysql://172.233.208.112:3306/custmax_official
+    url: jdbc:mysql://172.233.208.112:3306/custmax_official1
     username: root
     password: 2Ikroes&cube
   ai:
     openai:
       model: gpt-3.5-turbo
       api-key: your_api_key_here
+  mail:
+    host: smtp.larksuite.com
+    port: 465
+    username: hello@custmax.com
+    password: 2ZmJgBKYrs6yNRp5
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: false
+          ssl.enable: true
+          socketFactory.class: javax.net.ssl.SSLSocketFactory
+          timeout: 30000
+          connectiontimeout: 10000
+          writetimeout: 10000
 server:
   port: 9001
 
@@ -31,3 +46,18 @@ mail:
     host: imap.larksuite.com
     port: 993
     protocol: imap
+stripe:
+  public-key: ${STRIPE_PUBLISHABLE_KEY}
+  secret-key: ${STRIPE_SECRET_KEY}
+  success-url: https://www.custmax.com/payment/success
+  cancel-url: https://www.custmax.com/payment/cancel
+
+website:
+  wpcli:
+    host: 172.237.149.194
+    path: /var/www/wordpress
+
+domain:
+  email-receiver: hello@custmax.com
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

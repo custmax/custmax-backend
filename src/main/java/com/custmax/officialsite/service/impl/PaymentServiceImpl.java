@@ -63,7 +63,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 3. activate subscription
 
-        subscription.setStatus("active");
+        subscription.setStatus(Subscription.Status.active);
         subscriptionMapper.updateById(subscription);
 
         // 4. return result

@@ -1,7 +1,10 @@
 package com.custmax.officialsite.service;
 
+import com.custmax.officialsite.dto.domain.DomainReponse;
 import com.custmax.officialsite.dto.website.RegisterDomainRequest;
+import com.custmax.officialsite.entity.user.CustomUserDetails;
 
+import java.util.List;
 import java.util.Map;
 
 public interface DomainService {
@@ -32,4 +35,6 @@ public interface DomainService {
      * @return a map containing the availability status and details
      */
     Boolean checkDomainAvailability(String domainName);
+
+    List<DomainReponse> getCurrentUserDomains(CustomUserDetails userDetails);
 }

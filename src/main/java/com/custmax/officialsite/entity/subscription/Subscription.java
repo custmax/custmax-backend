@@ -12,7 +12,7 @@ public class Subscription {
     private Long id;
     private Long userId;
     private Long planId;
-    private String status;
+    private Status status;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Boolean cancelAtPeriodEnd;
@@ -24,4 +24,8 @@ public class Subscription {
     private LocalDateTime trialEndDate;
     private LocalDateTime renewalDate;
     private Boolean autoRenew;
+
+    public enum Status {
+        active, canceled, expired, pending;
+    }
 }

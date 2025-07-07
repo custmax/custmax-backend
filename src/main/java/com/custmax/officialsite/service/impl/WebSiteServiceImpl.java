@@ -48,7 +48,7 @@ public class WebSiteServiceImpl implements WebSiteService {
     }
     // Generates a username like "user_a8f3k2"
     public String generateRandomUsername() {
-        String prefix = "admin_";
+        String prefix = "admin";
         String randomStr = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
         return prefix + randomStr;
     }
@@ -62,7 +62,7 @@ public class WebSiteServiceImpl implements WebSiteService {
         // 1. Query user info
         User user = userMapper.selectById(userId);
         String adminName = generateRandomUsername();
-        String adminEmail = user.getEmail();
+        String adminEmail = user.getUsername();
         // for test
         adminEmail = "ccccc@qq.com";
         String networkAdminEmail = "clifford.xie@chtrak.com";
@@ -125,7 +125,7 @@ public class WebSiteServiceImpl implements WebSiteService {
 
             response.setSuccess(true);
             response.setSiteurl(siteUrl);
-            response.setAdminUser(user.getUsername());
+            response.setAdminUser(adminName);
             response.setAdminPassword(adminPassword);
 
             /**
@@ -148,7 +148,7 @@ public class WebSiteServiceImpl implements WebSiteService {
             website.setDomainId(domain.getId());
             website.setName(request.getName());
             website.setPermalinkStructure(siteUrl);
-            website.setStatus("active");
+            website.setStatus(Website.Status.published);
             website.setIndustry(request.getIndustry());
             webSiteMapper.insert(website);
         } catch (Exception e) {
@@ -160,7 +160,10 @@ public class WebSiteServiceImpl implements WebSiteService {
 
     @Override
     public List<?> listUserWebsites(Long userId) {
-        return List.of();
+        LambdaQueryWrapper<Website> websiteQueryWrapper = new LambdaQueryWrapper<>();
+        websiteQueryWrapper.eq(Website::getUserId, userId);
+        List<Website> websites = webSiteMapper.selectList(websiteQueryWrapper);
+        return websites;
     }
 
     @Override

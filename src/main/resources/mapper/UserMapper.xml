@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.custmax.officialsite.mapper.UserMapper">
+    <select id="getPlanNameByUsername" resultType="java.lang.String">
+        SELECT
+            COALESCE(
+                    (
+                        SELECT p.name AS plan_name
+                        FROM users u
+                                 JOIN subscriptions s ON u.id = s.user_id
+                                 JOIN plans p ON s.plan_id = p.id
+                        WHERE u.username = #{username}
+                          AND s.status = 'active'
+                          AND s.end_date >= NOW()
+                    LIMIT 1
+                ),
+        'free'
+        ) AS plan_name
+    </select>
+
+
+</mapper>
