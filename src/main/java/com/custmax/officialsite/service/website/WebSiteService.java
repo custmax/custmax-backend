@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service;
+package com.custmax.officialsite.service.website;
 
 import com.custmax.officialsite.dto.website.CreateWebsiteRequest;
 import com.custmax.officialsite.dto.website.CreateWebsiteResponse;

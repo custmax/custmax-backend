@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service;
+package com.custmax.officialsite.service.domain;
 
 import com.custmax.officialsite.dto.domain.DomainReponse;
 import com.custmax.officialsite.dto.website.RegisterDomainRequest;

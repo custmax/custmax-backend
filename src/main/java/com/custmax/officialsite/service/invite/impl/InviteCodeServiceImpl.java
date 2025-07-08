@@ -1,11 +1,11 @@
-package com.custmax.officialsite.service.impl;
+package com.custmax.officialsite.service.invite.impl;
 
 import ch.qos.logback.classic.Logger;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.custmax.officialsite.dto.user.ClaimInviteCodeResponse;
 import com.custmax.officialsite.entity.invite.InviteCode;
 import com.custmax.officialsite.mapper.InviteCodeMapper;
-import com.custmax.officialsite.service.InviteCodeService;
+import com.custmax.officialsite.service.invite.InviteCodeService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service;
+package com.custmax.officialsite.service.payment;
 
 import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
 import com.custmax.officialsite.dto.payment.PaymentRecordDTO;

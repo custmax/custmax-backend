@@ -1,5 +1,5 @@
 // src/main/java/com/custmax/officialsite/service/impl/PaymentServiceImpl.java
-package com.custmax.officialsite.service.impl;
+package com.custmax.officialsite.service.payment.impl;
 
 import com.custmax.officialsite.dto.payment.ConfirmPaymentRequest;
 import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
@@ -8,8 +8,8 @@ import com.custmax.officialsite.entity.payment.PaymentHistory;
 import com.custmax.officialsite.entity.subscription.Subscription;
 import com.custmax.officialsite.mapper.PaymentHistoryMapper;
 import com.custmax.officialsite.mapper.SubscriptionMapper;
-import com.custmax.officialsite.payment.PaymentStrategyFactory;
-import com.custmax.officialsite.service.PaymentService;
+import com.custmax.officialsite.service.payment.PaymentStrategyFactory;
+import com.custmax.officialsite.service.payment.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

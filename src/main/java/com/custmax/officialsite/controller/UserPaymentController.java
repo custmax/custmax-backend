@@ -2,7 +2,7 @@ package com.custmax.officialsite.controller;
 
 import com.custmax.officialsite.dto.payment.PaymentRecordDTO;
 import com.custmax.officialsite.entity.user.User;
-import com.custmax.officialsite.service.PaymentService;
+import com.custmax.officialsite.service.payment.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

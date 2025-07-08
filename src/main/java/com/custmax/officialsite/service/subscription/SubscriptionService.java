@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service;
+package com.custmax.officialsite.service.subscription;
 
 import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.subscription.SubscriptionPlanRequest;

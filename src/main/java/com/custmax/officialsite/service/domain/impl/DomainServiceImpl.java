@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service.impl;
+package com.custmax.officialsite.service.domain.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -9,7 +9,7 @@ import com.custmax.officialsite.entity.domain.Domain;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.mapper.DomainMapper;
 import com.custmax.officialsite.mapper.SshServerMapper;
-import com.custmax.officialsite.service.DomainService;
+import com.custmax.officialsite.service.domain.DomainService;
 import com.custmax.officialsite.util.SshExecutor;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+
 
 @Slf4j
 @Service

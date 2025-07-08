@@ -1,10 +1,9 @@
-package com.custmax.officialsite.service;
+package com.custmax.officialsite.service.user;
 
 import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.user.LoginResponse;
 import com.custmax.officialsite.dto.website.WebsiteDTO;
 import com.custmax.officialsite.entity.user.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 

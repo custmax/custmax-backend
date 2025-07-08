@@ -1,5 +1,5 @@
 // src/main/java/com/custmax/officialsite/payment/PaymentStrategyFactory.java
-package com.custmax.officialsite.payment;
+package com.custmax.officialsite.service.payment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

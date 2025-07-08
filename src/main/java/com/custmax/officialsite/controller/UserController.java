@@ -4,11 +4,12 @@ import com.custmax.officialsite.dto.domain.DomainReponse;
 import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.user.LoginRequest;
 import com.custmax.officialsite.dto.user.LoginResponse;
+import com.custmax.officialsite.dto.user.UserRegisterRequest;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.entity.user.User;
-import com.custmax.officialsite.service.DomainService;
-import com.custmax.officialsite.service.UserService;
-import com.custmax.officialsite.service.WebSiteService;
+import com.custmax.officialsite.service.domain.DomainService;
+import com.custmax.officialsite.service.user.UserService;
+import com.custmax.officialsite.service.website.WebSiteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +32,13 @@ public class UserController {
     private DomainService domainService;
 
     /** Registers a new user with the provided email, password, username, and invite code.
-     * @param email User's email address
-     * @param password User's password
-     * @param username User's username
-     * @param inviteCode Optional invite code for registration
+     * @param request The UserRegisterRequest containing user details
      * @return The registered User object
      */
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
-    public User register(@RequestParam String email, @RequestParam String password,
-                         @RequestParam String username, @RequestParam String inviteCode) {
-        return userService.register(email, password, username, inviteCode);
+    public User register(@RequestBody UserRegisterRequest request) {
+        return userService.register(request.getEmail(), request.getPassword(), request.getUsername(), request.getInviteCode());
     }
 
     /**

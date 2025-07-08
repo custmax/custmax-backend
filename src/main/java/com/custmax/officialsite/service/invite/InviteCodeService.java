@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service;
+package com.custmax.officialsite.service.invite;
 
 import com.custmax.officialsite.dto.user.ClaimInviteCodeResponse;
 import com.custmax.officialsite.entity.invite.InviteCode;

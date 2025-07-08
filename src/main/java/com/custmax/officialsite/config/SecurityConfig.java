@@ -1,7 +1,7 @@
 package com.custmax.officialsite.config;
 
 import com.custmax.officialsite.filter.JwtAuthenticationFilter;
-import com.custmax.officialsite.service.impl.CustomUserDetailsServiceImpl;
+import com.custmax.officialsite.service.user.impl.CustomUserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

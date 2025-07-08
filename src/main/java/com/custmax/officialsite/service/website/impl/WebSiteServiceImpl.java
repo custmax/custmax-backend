@@ -1,4 +1,4 @@
-package com.custmax.officialsite.service.impl;
+package com.custmax.officialsite.service.website.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.custmax.officialsite.dto.website.CreateWebsiteRequest;
@@ -8,7 +8,7 @@ import com.custmax.officialsite.entity.subscription.Subscription;
 import com.custmax.officialsite.entity.user.User;
 import com.custmax.officialsite.entity.website.Website;
 import com.custmax.officialsite.mapper.*;
-import com.custmax.officialsite.service.WebSiteService;
+import com.custmax.officialsite.service.website.WebSiteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,8 +63,6 @@ public class WebSiteServiceImpl implements WebSiteService {
         User user = userMapper.selectById(userId);
         String adminName = generateRandomUsername();
         String adminEmail = user.getUsername();
-        // for test
-        adminEmail = "ccccc@qq.com";
         String networkAdminEmail = "clifford.xie@chtrak.com";
         // 2. Generate random password
         String adminPassword = generateRandomPassword(12);

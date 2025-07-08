@@ -1,7 +1,7 @@
 package com.custmax.officialsite.controller;
 
 import com.custmax.officialsite.dto.website.RegisterDomainRequest;
-import com.custmax.officialsite.service.DomainService;
+import com.custmax.officialsite.service.domain.DomainService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

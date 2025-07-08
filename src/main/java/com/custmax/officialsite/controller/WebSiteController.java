@@ -3,7 +3,7 @@ package com.custmax.officialsite.controller;
 import com.custmax.officialsite.dto.website.CreateWebsiteRequest;
 import com.custmax.officialsite.dto.website.CreateWebsiteResponse;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
-import com.custmax.officialsite.service.impl.WebSiteServiceImpl;
+import com.custmax.officialsite.service.website.impl.WebSiteServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

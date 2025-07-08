@@ -17,7 +17,7 @@
                           AND s.end_date >= NOW()
                     LIMIT 1
                 ),
-        'free'
+        'Free'
         ) AS plan_name
     </select>
 

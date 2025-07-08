@@ -5,7 +5,7 @@ import com.custmax.officialsite.dto.subscription.SubscriptionPlanRequest;
 import com.custmax.officialsite.dto.subscription.SubscriptionServiceRequest;
 import com.custmax.officialsite.dto.subscription.UpdateSubscriptionRequest;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
-import com.custmax.officialsite.service.impl.SubscriptionServiceImpl;
+import com.custmax.officialsite.service.subscription.impl.SubscriptionServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;

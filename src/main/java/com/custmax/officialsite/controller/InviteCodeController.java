@@ -1,7 +1,7 @@
 package com.custmax.officialsite.controller;
 
 import com.custmax.officialsite.entity.invite.InviteCode;
-import com.custmax.officialsite.service.InviteCodeService;
+import com.custmax.officialsite.service.invite.InviteCodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
