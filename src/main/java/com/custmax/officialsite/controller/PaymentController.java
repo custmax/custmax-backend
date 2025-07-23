@@ -1,6 +1,8 @@
 package com.custmax.officialsite.controller;
 
 import com.custmax.officialsite.dto.payment.ConfirmPaymentRequest;
+import com.custmax.officialsite.dto.payment.ConfirmPaymentResponse;
+import com.custmax.officialsite.dto.payment.GetPaymentDetailsResponse;
 import com.custmax.officialsite.service.payment.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,24 +20,14 @@ public class PaymentController {
 
     /**
      * Initiates a payment transaction.
-     * @param request contains payment details
+     * @param sessionId the ID of the payment session
      * @return ResponseEntity with payment initiation status
      */
     @Operation(summary = "Initiate a payment transaction")
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmPayment(@RequestBody ConfirmPaymentRequest request) {
-        Object result = paymentService.confirmPayment(request);
+    public ResponseEntity<ConfirmPaymentResponse> confirmPayment(@RequestParam String sessionId) {
+        ConfirmPaymentResponse result = paymentService.confirmPayment(sessionId);
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * Retrieves payment details by ID.
-     * @param paymentId the ID of the payment
-     * @return ResponseEntity with payment details
-     */
-    @Operation(summary = "Get payment details by ID")
-    @GetMapping("/{paymentId}")
-    public ResponseEntity<?> getPaymentDetails(@PathVariable Long paymentId) {
-        return ResponseEntity.ok(paymentService.getPaymentDetails(String.valueOf(paymentId)));
-    }
 }

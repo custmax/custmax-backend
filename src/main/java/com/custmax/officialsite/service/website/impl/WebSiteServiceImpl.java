@@ -3,6 +3,7 @@ package com.custmax.officialsite.service.website.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.custmax.officialsite.dto.website.CreateWebsiteRequest;
 import com.custmax.officialsite.dto.website.CreateWebsiteResponse;
+import com.custmax.officialsite.dto.website.GetUserWebsiteDetailsResponse;
 import com.custmax.officialsite.entity.domain.Domain;
 import com.custmax.officialsite.entity.subscription.Subscription;
 import com.custmax.officialsite.entity.user.User;
@@ -148,6 +149,8 @@ public class WebSiteServiceImpl implements WebSiteService {
             website.setPermalinkStructure(siteUrl);
             website.setStatus(Website.Status.published);
             website.setIndustry(request.getIndustry());
+            website.setAdminUser(adminName);
+            website.setAdminPassword(adminPassword);
             webSiteMapper.insert(website);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -157,25 +160,23 @@ public class WebSiteServiceImpl implements WebSiteService {
     }
 
     @Override
-    public List<?> listUserWebsites(Long userId) {
-        LambdaQueryWrapper<Website> websiteQueryWrapper = new LambdaQueryWrapper<>();
-        websiteQueryWrapper.eq(Website::getUserId, userId);
-        List<Website> websites = webSiteMapper.selectList(websiteQueryWrapper);
-        return websites;
+    public List<GetUserWebsiteDetailsResponse> getUserWebsites(Long userId) {
+        LambdaQueryWrapper<Website> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Website::getUserId, userId);
+        List<Website> websites = webSiteMapper.selectList(queryWrapper);
+
+        return websites.stream().map(website -> {
+            GetUserWebsiteDetailsResponse response = new GetUserWebsiteDetailsResponse();
+            response.setId(website.getId());
+            response.setName(website.getName());
+            response.setPermalinkStructure(website.getPermalinkStructure());
+            response.setStatus(website.getStatus().name());
+            response.setIsMultisite(website.getIsMultisite());
+            response.setCreatedAt(website.getCreatedAt().toLocalDateTime());
+            response.setUpdatedAt(website.getUpdatedAt().toLocalDateTime());
+            return response;
+        }).toList();
     }
 
-    @Override
-    public Object getWebsiteDetails(Long id, Long userId) {
-        return null;
-    }
 
-    @Override
-    public Object updateWebsite(Long id, Map<String, Object> request, Long userId) {
-        return null;
-    }
-
-    @Override
-    public void deleteWebsite(Long id, Long userId) {
-
-    }
 }

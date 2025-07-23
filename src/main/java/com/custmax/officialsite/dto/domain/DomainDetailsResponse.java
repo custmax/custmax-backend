@@ -4,7 +4,7 @@ import com.custmax.officialsite.entity.domain.Domain;
 import lombok.Data;
 
 @Data
-public class DomainReponse {
+public class DomainDetailsResponse {
     Long id;
     String domainName;
     Domain.Status domainStatus;

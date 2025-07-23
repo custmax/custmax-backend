@@ -1,19 +1,15 @@
 package com.custmax.officialsite.service.user;
 
-import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.user.LoginResponse;
-import com.custmax.officialsite.dto.website.WebsiteDTO;
+import com.custmax.officialsite.dto.user.UserRegisterRequest;
+import com.custmax.officialsite.dto.user.UserRegisterResponse;
 import com.custmax.officialsite.entity.user.User;
 
-import java.util.List;
 
 public interface UserService {
-    User register(String email, String password, String username, String inviteCode);
+    UserRegisterResponse register(UserRegisterRequest request);
     LoginResponse login(String email, String password);
     User getCurrentUser();
     void resetPassword(String token, String newPassword);
     void sendResetPasswordEmail(String email);
-    List<WebsiteDTO> getCurrentUserWebsites();
-    List<String> getCurrentUserDomains();
-    List<SubscriptionResponse> getCurrentUserSubscriptions();
 }

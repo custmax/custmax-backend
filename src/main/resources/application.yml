@@ -58,29 +58,6 @@ cors:
     - "*"
   allow-credentials: true
 
-# ===================================================================
-# Custom Mail Configuration (Common Extended)
-# ===================================================================
-mail:
-  host: smtp.larksuite.com
-  port: 465
-  username: hello@custmax.com
-  password: 2ZmJgBKYrs6yNRp5
-  protocol: smtp
-  properties:
-    mail:
-      smtp:
-        auth: true
-        starttls:
-          enable: true
-        ssl:
-          enable: true
-
-  # IMAP Configuration
-  imap:
-    host: imap.larksuite.com
-    port: 993
-    protocol: imap
 
 # ===================================================================
 # Payment Configuration (Common)

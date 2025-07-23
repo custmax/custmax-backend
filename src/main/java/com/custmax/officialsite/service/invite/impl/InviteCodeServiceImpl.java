@@ -45,14 +45,14 @@ public class InviteCodeServiceImpl implements InviteCodeService {
 
     @Override
     public ClaimInviteCodeResponse claim(String email) {
-        // 查询该邮箱是否已存在未使用的邀请码
+        // query if the user already has an unused invite code
         InviteCode exist = inviteCodeMapper.selectOne(
                 new LambdaQueryWrapper<InviteCode>()
                         .eq(InviteCode::getEmail, email)
                         .eq(InviteCode::getIsUsed, false)
         );
         if (exist != null) {
-            // 已有未使用的邀请码，不再发送邮件
+            // already has an unused invite code
             return new ClaimInviteCodeResponse(exist.getCode(), true);
         }
         String code = generateUniqueInviteCode();
@@ -63,7 +63,7 @@ public class InviteCodeServiceImpl implements InviteCodeService {
         inviteCode.setCreatedAt(LocalDateTime.now());
         inviteCodeMapper.insert(inviteCode);
 
-        // 发送邮件
+        // send the invite code to the user's email
         boolean sendSuccess = sendInviteConfirmation(email, code);
         if (sendSuccess == false) {
             logger.error("failed to send invite code to email: {}", email);

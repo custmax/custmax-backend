@@ -8,5 +8,4 @@ import lombok.Data;
 public class ClaimInviteCodeResponse {
     private String code;
     private boolean existed;
-
 }

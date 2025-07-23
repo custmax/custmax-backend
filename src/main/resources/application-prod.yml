@@ -20,9 +20,9 @@ server:
 spring:
   # Database Configuration (Development Default)
   datasource:
-    url: jdbc:mysql://localhost:3306/custmax_official
+    url: jdbc:mysql://172.233.208.112:3306/custmax_official2
     username: root
-    password: rootpassword
+    password: 2Ikroes&cube
 
   # Mail Configuration (Common)
   mail:
@@ -57,7 +57,7 @@ mybatis:
 # CORS Configuration (Development Default)
 # ===================================================================
 cors:
-  allowed-origins: http://localhost:3000
+  allowed-origins: https://www.custmax.com
   allowed-methods:
     - GET
     - POST
@@ -114,4 +114,4 @@ website:
   wpcli:
     host: 172.237.149.194
     path: /var/www/wordpress
-  full-url: http://localhost:3000
+  full-url: https://www.custmax.com

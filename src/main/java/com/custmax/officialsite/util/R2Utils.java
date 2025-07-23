@@ -28,14 +28,14 @@ public class R2Utils {
     private static String endpoint = "https://<your-access-id>.r2.cloudflarestorage.com";
     private static String bucketName = "<your-bucket-name>";
     public static String uploadFile(MultipartFile file) throws IOException {
-        // 创建S3客户端
+        // create S3 client
         S3Client s3 = S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
-                .region(Region.US_EAST_1)  // Cloudflare R2区域（选择合适的区域）
+                .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
                 .build();
 
-        // 上传文件
+        // upload file to R2
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(file.getOriginalFilename())
@@ -47,9 +47,9 @@ public class R2Utils {
         );
         log.info("File uploaded successfully: {}" , response.eTag());
 
-        // 关闭S3客户端
+        // close s3 client
         s3.close();
-        // 拼接URL
+        // concat the url
         String url = "https://<your-domain>/"+file.getOriginalFilename();
         return url;
     }

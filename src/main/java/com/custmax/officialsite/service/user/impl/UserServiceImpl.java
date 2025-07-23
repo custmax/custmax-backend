@@ -1,9 +1,9 @@
 package com.custmax.officialsite.service.user.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
 import com.custmax.officialsite.dto.user.LoginResponse;
-import com.custmax.officialsite.dto.website.WebsiteDTO;
+import com.custmax.officialsite.dto.user.UserRegisterRequest;
+import com.custmax.officialsite.dto.user.UserRegisterResponse;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.entity.user.User;
 import com.custmax.officialsite.entity.invite.InviteCode;
@@ -19,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,25 +30,29 @@ public class UserServiceImpl implements UserService {
     @Resource
     private InviteCodeMapper inviteCodeMapper;
 
+    @Resource
+    private EmailSenderStrategyFactory emailSenderContext;
+
     @Value("${website.full-url}")
     private String websiteFullUrl;
+
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public User register(String email, String password, String username, String inviteCode) {
-        InviteCode code = inviteCodeMapper.selectById(inviteCode);
+    public UserRegisterResponse register(UserRegisterRequest request) {
+        InviteCode code = inviteCodeMapper.selectById(request.getInviteCode());
         if (code == null || Boolean.TRUE.equals(code.getIsUsed())) {
             throw new IllegalArgumentException("invite code is invalid or already used");
         }
-        if (userMapper.selectOne(new QueryWrapper<User>().eq("email", email)) != null) {
+        if (userMapper.selectOne(new QueryWrapper<User>().eq("username", request.getEmail())) != null) {
             throw new IllegalArgumentException("email already exists");
         }
         User user = new User();
-        user.setUsername(email);
-        user.setPasswordHash(passwordEncoder.encode(password));
-        user.setUsername(username);
-        user.setInvitedByCode(inviteCode);
+        user.setUsername(request.getEmail());
+        user.setNickname(request.getNickname());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setInvitedByCode(request.getEmail());
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         userMapper.insert(user);
@@ -59,7 +62,14 @@ public class UserServiceImpl implements UserService {
         code.setUsedAt(LocalDateTime.now());
         inviteCodeMapper.updateById(code);
 
-        return user;
+        UserRegisterResponse response = new UserRegisterResponse();
+        response.setId(user.getId());
+        response.setNickname(request.getNickname());
+        response.setUsername(request.getEmail());
+        response.setCreatedAt(LocalDateTime.now());
+        response.setInvitedByCode(request.getInviteCode());
+        response.setCreatedAt(LocalDateTime.now());
+        return response;
     }
 
     @Override
@@ -106,25 +116,9 @@ public class UserServiceImpl implements UserService {
 
         String resetUrl = websiteFullUrl + "/reset-password?token=" + token;
 
-        EmailSenderStrategyFactory emailSenderContext = new EmailSenderStrategyFactory();
+
         emailSenderContext.sendResetPasswordEmail("smtp", email, resetUrl);
 
-
-    }
-
-    @Override
-    public List<WebsiteDTO> getCurrentUserWebsites() {
-        return null;
-    }
-
-    @Override
-    public List<String> getCurrentUserDomains() {
-        return List.of();
-    }
-
-    @Override
-    public List<SubscriptionResponse> getCurrentUserSubscriptions() {
-        return List.of();
     }
 
     @Override

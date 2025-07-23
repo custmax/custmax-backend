@@ -1,7 +1,9 @@
 // src/main/java/com/custmax/officialsite/payment/StripePaymentStrategy.java
 package com.custmax.officialsite.service.payment;
 
+import com.custmax.officialsite.dto.payment.ConfirmPaymentInfoDTO;
 import com.custmax.officialsite.dto.payment.ConfirmPaymentRequest;
+import com.custmax.officialsite.dto.payment.CreatePaymentIntentInfoDTO;
 import com.custmax.officialsite.dto.payment.CreatePaymentIntentRequest;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
@@ -31,7 +33,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
     }
 
     @Override
-    public Map<String, Object> createPaymentIntent(CreatePaymentIntentRequest request) {
+    public CreatePaymentIntentInfoDTO createPaymentIntent(CreatePaymentIntentRequest request) {
         try {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -58,26 +60,28 @@ public class StripePaymentStrategy implements PaymentStrategy {
 
             Session session = Session.create(params);
 
-            Map<String, Object> result = new HashMap<>();
-            result.put("sessionUrl", session.getUrl());
-            result.put("sessionId", session.getId());
-            return result;
+            CreatePaymentIntentInfoDTO info = new CreatePaymentIntentInfoDTO();
+            info.setSessionId(session.getId());
+            info.setSessionUrl(session.getUrl());
+            return info;
         } catch (Exception e) {
             throw new RuntimeException("Stripe create session failed", e);
         }
     }
 
     @Override
-    public Map<String, Object> confirmPayment(ConfirmPaymentRequest request) {
+    public ConfirmPaymentInfoDTO confirmPayment(String sessionId) {
         try {
-            Session session = Session.retrieve(request.getSessionId());
+            Session session = Session.retrieve(sessionId);
             Map<String, String> metadata = session.getMetadata();
-            Map<String, Object> result = new HashMap<>();
-            result.put("status", session.getPaymentStatus());
-            result.put("subscriptionId", metadata.get("subscriptionId"));
-            result.put("customer", session.getCustomer());
-            result.put("amount", session.getAmountTotal());
-            return result;
+            ConfirmPaymentInfoDTO info = new ConfirmPaymentInfoDTO();
+
+            info.setStatus(session.getPaymentStatus());
+            info.setSubscriptionId(Long.valueOf(metadata.get("subscriptionId")));
+            info.setCustomer(metadata.get("customer"));
+            info.setAmount(session.getAmountTotal());
+
+            return info;
         } catch (Exception e) {
             throw new RuntimeException("Stripe confirm payment failed", e);
         }

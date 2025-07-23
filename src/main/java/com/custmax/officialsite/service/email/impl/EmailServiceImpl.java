@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EmailServiceImpl implements EmailService {
-    private final EmailSenderStrategyFactory emailSenderContext;
+    private final EmailSenderStrategyFactory emailSenderStrategyfactory;
 
     @Autowired
     public EmailServiceImpl(EmailSenderStrategyFactory emailSenderContext) {
-        this.emailSenderContext = emailSenderContext;
+        this.emailSenderStrategyfactory = emailSenderContext;
     }
 
     @Override
     public void sendResetPassword(String strategy, String to, String resetUrl) {
-        emailSenderContext.sendResetPasswordEmail(strategy, to, resetUrl);
+        emailSenderStrategyfactory.sendResetPasswordEmail(strategy, to, resetUrl);
     }
 
 }

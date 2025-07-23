@@ -11,7 +11,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("API 文档").version("1.0"))
+                .info(new Info().title("API Document").version("1.1").description("This is the API documentation for CustMax Official Site."))
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes("BearerAuth",

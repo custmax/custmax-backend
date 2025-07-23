@@ -4,7 +4,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class PaymentRecordDTO {
+public class GetPaymentDetailsResponse {
     private Long id;
     private String paymentMethod;
     private String status;

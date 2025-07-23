@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * email sender strategy factory
@@ -15,9 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 public class EmailSenderStrategyFactory {
-
     @Autowired
-    private final Map<String, EmailSenderStrategy> strategies = new ConcurrentHashMap<>();
+    private Map<String, EmailSenderStrategy> strategies;
 
     /**
      * fetch the email sender strategy by name

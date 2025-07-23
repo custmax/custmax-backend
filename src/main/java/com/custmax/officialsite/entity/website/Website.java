@@ -54,6 +54,12 @@ public class Website {
     @TableField("industry")
     private String industry;
 
+    @TableField("admin_user")
+    private String adminUser;
+
+    @TableField("admin_password")
+    private String adminPassword;
+
     public enum Status {
         draft, published, archived;
     }

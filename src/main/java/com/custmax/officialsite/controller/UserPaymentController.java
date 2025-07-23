@@ -1,6 +1,6 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.payment.PaymentRecordDTO;
+import com.custmax.officialsite.dto.payment.GetPaymentDetailsResponse;
 import com.custmax.officialsite.entity.user.User;
 import com.custmax.officialsite.service.payment.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +30,10 @@ public class UserPaymentController {
      */
     @Operation(summary = "Get current user's payment history")
     @GetMapping
-    public ResponseEntity<PaymentRecordDTO> getMyPaymentHistory() {
+    public ResponseEntity<GetPaymentDetailsResponse> getMyPaymentHistory() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = ((User) authentication.getPrincipal()).getId();
-        PaymentRecordDTO response = (PaymentRecordDTO) paymentService.getCurrentUserPaymentHistory(userId);
+        GetPaymentDetailsResponse response = (GetPaymentDetailsResponse) paymentService.getCurrentUserPaymentHistory(userId);
         return ResponseEntity.ok(response);
     }
 }

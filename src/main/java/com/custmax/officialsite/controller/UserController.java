@@ -1,12 +1,14 @@
 package com.custmax.officialsite.controller;
 
-import com.custmax.officialsite.dto.domain.DomainReponse;
-import com.custmax.officialsite.dto.subscription.SubscriptionResponse;
+import com.custmax.officialsite.dto.domain.DomainDetailsResponse;
 import com.custmax.officialsite.dto.user.LoginRequest;
 import com.custmax.officialsite.dto.user.LoginResponse;
 import com.custmax.officialsite.dto.user.UserRegisterRequest;
+import com.custmax.officialsite.dto.user.UserRegisterResponse;
+import com.custmax.officialsite.dto.website.GetUserWebsiteDetailsResponse;
 import com.custmax.officialsite.entity.user.CustomUserDetails;
 import com.custmax.officialsite.entity.user.User;
+import com.custmax.officialsite.entity.website.Website;
 import com.custmax.officialsite.service.domain.DomainService;
 import com.custmax.officialsite.service.user.UserService;
 import com.custmax.officialsite.service.website.WebSiteService;
@@ -16,20 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "User Management", description = "Manage user accounts and profiles")
 public class UserController {
-    @Resource
+    @Autowired
     private UserService userService;
-
-    @Resource
-    private WebSiteService webSiteService;
     @Autowired
     private DomainService domainService;
+    @Autowired
+    private WebSiteService webSiteService;
 
     /** Registers a new user with the provided email, password, username, and invite code.
      * @param request The UserRegisterRequest containing user details
@@ -37,8 +37,8 @@ public class UserController {
      */
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
-    public User register(@RequestBody UserRegisterRequest request) {
-        return userService.register(request.getEmail(), request.getPassword(), request.getUsername(), request.getInviteCode());
+    public UserRegisterResponse register(@RequestBody UserRegisterRequest request) {
+        return userService.register(request);
     }
 
     /**
@@ -84,34 +84,19 @@ public class UserController {
     }
 
     /**
-     * Retrieves the current user's subscription details.
-     * @return
-     */
-    @Operation(summary = "Get current user details with authentication")
-    @GetMapping("/me/subscription")
-    public List<SubscriptionResponse> getUserSubscriptions() {
-        return userService.getCurrentUserSubscriptions();
-    }
-
-    /**
      * Retrieves the current user's domains.
      * @return
      */
     @Operation(summary = "Get current user domains")
     @GetMapping("/me/domains")
-    public ResponseEntity<List<DomainReponse>> getUserDomains(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<List<DomainDetailsResponse>> getUserDomains(@AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(domainService.getCurrentUserDomains(user));
     }
 
-    /**
-     * Lists all websites associated with the current user.
-     * @param user The authenticated user
-     * @return A list of websites for the user
-     */
-    @Operation(summary = "List websites for the current user")
+    @Operation(summary = "Get current user websites")
     @GetMapping("/me/websites")
-    public ResponseEntity<?> listUserWebsites(@AuthenticationPrincipal CustomUserDetails user) {
-        List<?> websites = webSiteService.listUserWebsites(user.getUserId());
+    public ResponseEntity<List<GetUserWebsiteDetailsResponse>> getUserWebsites(@AuthenticationPrincipal CustomUserDetails user) {
+        List<GetUserWebsiteDetailsResponse> websites = webSiteService.getUserWebsites(user.getUserId());
         return ResponseEntity.ok(websites);
     }
 

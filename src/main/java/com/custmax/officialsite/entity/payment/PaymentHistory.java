@@ -10,6 +10,9 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentHistory {
+    public enum PaymentStatus {
+        PENDING, COMPLETED, FAILED, REFUNDED
+    }
     private Long id;
     private Long userId;
     private Long subscriptionId;
@@ -19,6 +22,6 @@ public class PaymentHistory {
     private String paymentMethod;
     private String paymentId;
     private String invoiceId;
-    private String status;
+    private PaymentStatus status;
     private Timestamp createdAt;
 }

@@ -12,6 +12,6 @@ import lombok.Data;
 public class UserRegisterRequest {
     String email;
     String password;
-    String username;
+    String nickname;
     String inviteCode;
 }

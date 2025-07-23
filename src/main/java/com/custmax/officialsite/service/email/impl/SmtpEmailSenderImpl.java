@@ -5,6 +5,7 @@ import com.custmax.officialsite.service.email.EmailSenderStrategy;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,9 @@ public class SmtpEmailSenderImpl implements EmailSenderStrategy {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${spring.mail.host}")
+    private String mailHost;
+
     private void sendEmailWithTemplate(String to, String subject, String templateName, Map<String, String> params) {
         try {
             ClassPathResource resource = new ClassPathResource(templateName);
@@ -35,6 +39,7 @@ public class SmtpEmailSenderImpl implements EmailSenderStrategy {
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(mailHost);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(html, true);
@@ -49,7 +54,7 @@ public class SmtpEmailSenderImpl implements EmailSenderStrategy {
     @Override
     public void sendResetPasswordEmail(String to, String resetUrl) {
         Map<String, String> params = new HashMap<>();
-        params.put("resetUrl", resetUrl);
+        params.put("RESET_URL", resetUrl);
         sendEmailWithTemplate(to, "Password Reset", "reset_password.html", params);
     }
 }
